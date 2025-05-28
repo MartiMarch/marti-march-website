@@ -1,0 +1,26 @@
+<style>
+    .math-block {
+        margin: 1em 0;
+        border-left: 0.4em solid {{ .Site.Params.style.primaryColor }};
+        padding: 0.5em 0.5em;
+        background-color: #272822;
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.12em;
+        overflow-x: auto;
+        color: #f8f8f2;
+        line-height: 1.6;
+    }
+
+    .math-block .mjx-block {
+        margin-bottom: 0.4em;
+    }
+
+</style>
+
+<!-- https://docs.mathjax.org/en/latest/basic/mathematics.html -->
+<div class="math-block">
+    {{ .Inner }}
+</div>
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>

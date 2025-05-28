@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="es">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <title>Cómo construí mi cloud privado sobre infraestructura on-premise // Marti March</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.147.5">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Marti March" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.d024432de022f80a70ac780c7b5c1965b59484c9412974c923ed27741792fb9a.css" />
+    
+
+    
+    
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Cómo construí mi cloud privado sobre infraestructura on-premise">
+  <meta name="twitter:description" content="Introducción En este artículo voy a tratar de explciar cómo y porqué decidí crear un cloud privado sobre una infraestructura on-premise, usando ordenadores lo más baratos posibles.
+Si también tienes en mente emplear un cloud privado on-premise, has de saber que tiene cierto grado de complejidad y se requieren ciertos conocimientos previos de red, Kubernetes y Linux.
+Capítulo 1: El problema Capítulo 2: La solución Red energética Arquitectura de red Despliegue del cluster de k8s Persistencia de la información Capítulo 3: La solución se transforma en un problema Capítulo 4: Colcusiones Capítulo 1: El problema Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar mis recursos estratégicamente o acabaré convirtiéndome en un sintecho. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones legales relacionadas con la titularidad y las condiciones de uso, es decir, con la propiedad intelectual. Compartir código abiertamente, sin establecer ninguna restricción, puede llegar a ser una mala idea. Soy consciente de que, muy probablemente, jamás logre monetizar ninguna de mis soluciones… pero, ¿quién sabe?">
+
+    <meta property="og:url" content="http://localhost:1313/es/es/articulos/mi-cloud-on-premise/">
+  <meta property="og:site_name" content="Marti March">
+  <meta property="og:title" content="Cómo construí mi cloud privado sobre infraestructura on-premise">
+  <meta property="og:description" content="Introducción En este artículo voy a tratar de explciar cómo y porqué decidí crear un cloud privado sobre una infraestructura on-premise, usando ordenadores lo más baratos posibles.
+Si también tienes en mente emplear un cloud privado on-premise, has de saber que tiene cierto grado de complejidad y se requieren ciertos conocimientos previos de red, Kubernetes y Linux.
+Capítulo 1: El problema Capítulo 2: La solución Red energética Arquitectura de red Despliegue del cluster de k8s Persistencia de la información Capítulo 3: La solución se transforma en un problema Capítulo 4: Colcusiones Capítulo 1: El problema Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar mis recursos estratégicamente o acabaré convirtiéndome en un sintecho. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones legales relacionadas con la titularidad y las condiciones de uso, es decir, con la propiedad intelectual. Compartir código abiertamente, sin establecer ninguna restricción, puede llegar a ser una mala idea. Soy consciente de que, muy probablemente, jamás logre monetizar ninguna de mis soluciones… pero, ¿quién sabe?">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="es">
+    <meta property="article:published_time" content="2025-05-06T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-05-06T00:00:00+00:00">
+    <meta property="article:tag" content="K8s">
+    <meta property="article:tag" content="Sysadmin">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="Cloud">
+    <meta property="article:tag" content="Devops">
+    <meta property="article:tag" content="On-Premise">
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="/"><img class="app-header-avatar" src="/user-photo.jpeg" alt="Marti March" /></a>
+      <span class="app-header-title">Marti March</span>
+      <hr class="menu-hr">
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/es/sobre-mi">Sobre mí</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/es/articulos/">Últimos artículos</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/es/intereses">Intereses</a>
+      </nav>
+      <hr class="menu-hr">
+      <p> </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/MartiMarch" target="_blank" rel="noreferrer noopener me">
+            <svg class="icon icon-brand-github" viewBox="0 0 24 24" fill="currentColor"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/mart%C3%AD-march" target="_blank" rel="noreferrer noopener me">
+            <svg class="icon icon-brand-linkedin" viewBox="0 0 24 24" fill="currentColor"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        
+      </div>
+      <hr class="menu-hr">
+      <div class="lang-switcher">
+        <a href="/es/articulos">ES</a>
+        <span class="span-languages">|</span>
+        <a href="/en/posts">EN</a>
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Cómo construí mi cloud privado sobre infraestructura on-premise</h1>
+      <div class="post-meta">
+        <div>
+          <svg class="icon icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>calendar</title><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          May 6, 2025
+        </div>
+        <div>
+          <svg class="icon icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>clock</title><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          16 min read
+        </div>
+        <div>
+          <svg class="icon icon-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>tag</title><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+              <a class="tag" href="/es/tags/k8s/">K8s</a>
+              <a class="tag" href="/es/tags/sysadmin/">Sysadmin</a>
+              <a class="tag" href="/es/tags/linux/">Linux</a>
+              <a class="tag" href="/es/tags/cloud/">Cloud</a>
+              <a class="tag" href="/es/tags/devops/">Devops</a>
+              <a class="tag" href="/es/tags/on-premise/">On-Premise</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h1 id="introducción">Introducción</h1>
+<p>En este artículo voy a tratar de explciar cómo y porqué decidí crear un cloud privado sobre una infraestructura on-premise, usando ordenadores lo más baratos posibles.</p>
+<p>Si también tienes en mente emplear un cloud privado on-premise, has de saber que tiene cierto grado de complejidad y se requieren ciertos conocimientos previos de red, Kubernetes y Linux.</p>
+<ul>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-1-el-problema">Capítulo 1: El problema</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-2-la-soluci%c3%b3n">Capítulo 2: La solución</a>
+<ul>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#red-energ%c3%a9tica">Red energética</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#arquitectura-de-red">Arquitectura de red</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#desplieuge-del-cluster-de-k8s">Despliegue del cluster de k8s</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#persistencia-de-la-informaci%c3%b3n">Persistencia de la información</a></li>
+</ul>
+</li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-3-la-soluci%c3%b3n-se-transforma-en-un-problema">Capítulo 3: La solución se transforma en un problema</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-4-conclusiones">Capítulo 4: Colcusiones</a></li>
+</ul>
+<h1 id="capítulo-1-el-problema">Capítulo 1: El problema</h1>
+<p>Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar
+mis recursos estratégicamente o acabaré convirtiéndome en un sintecho. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones
+legales relacionadas con la titularidad y las condiciones de uso, es decir, con la propiedad intelectual. Compartir código abiertamente, sin establecer ninguna restricción, puede llegar a ser una mala idea. Soy consciente de que, muy probablemente,
+jamás logre monetizar ninguna de mis soluciones&hellip; pero, ¿quién sabe?</p>
+<p>Por todo ello llegué a una conclusión: para evitar problemas, debía contar con mi propia infraestructura. La estrategia es simple: por un lado, evito tener que pagar por servicios en la nube o soluciones SaaS y, por otro, mantengo todos mis proyectos
+ocultos al ojo ajeno. Me incomoda pensar que los costes puedan descontrolarse por un simple error de configuración en una infraestructura de terceros. Además, me ahorro tener que crear una sociedad limitada solo para proteger legalmente lo que hago.
+Una SL conlleva demasiados quebraderos de cabeza a nivel burocrático en el país donde vivo, España.</p>
+<h1 id="capítulo-2-la-solución">Capítulo 2: La solución</h1>
+<p>Para crear algo mínimanete funcional primero es necesario establecer el paradigma sobre el que ir tomando las decisiones. En mi caso he establecido tres principios:</p>
+<ul>
+<li>Las soluciones creadas se han de poder desplegar en otros entornos cloud, como podrían ser AWS, Azure, GCP o directamente sobre un cluster de Kubernetes.</li>
+<li>Se ha de probar la solución sobre un entorno distribuido y con alta disponiblididad (HA).</li>
+<li>Cada compontente que conforma el sistema had e ser lo más barato posible</li>
+</ul>
+<p>La tecnología trabaja en base a capas de abstarcción, es responsabilidad de cada uno decidir a partir de que nivel  empezar a asumir responsabilidades o, por el contrario, cederlas a terceros. En este caso contreto decidí partir con máquinas físicas
+sobre las que instalé Ubuntu para terminar desplegando un cluster de Kubernetes. Considerando que cada nodo requiere 2 cores y 2 Gb como mínimo para poder operar como nodo del cluster, compré seis máquinas. Tres de estas tiene el rol de Control Plane y
+las tres restantes el rol de Worker. En caso de necesitar más capacidad se pueden incrementer el número de nodos Worker, así que hay bastante flexibilidad.</p>
+<p>Lo que hice a continuacióin fue seleccionar los componentes de ordenador que mejor se ajustaban, es decir, los más baratos.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Role</th>
+          <th>CPU</th>
+          <th>RAM</th>
+          <th>Motherboard</th>
+          <th>PSU</th>
+          <th>Disk</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>master 1</td>
+          <td>Ryzen 3 4100</td>
+          <td>12 GB</td>
+          <td>GigaByte A520M S2H</td>
+          <td>550 W</td>
+          <td>120GB SSD</td>
+      </tr>
+      <tr>
+          <td>master 2</td>
+          <td>Ryzen 3 4100</td>
+          <td>12 GB</td>
+          <td>GigaByte A520M S2H</td>
+          <td>550 W</td>
+          <td>120GB SSD</td>
+      </tr>
+      <tr>
+          <td>master 3</td>
+          <td>Ryzen 3 4100</td>
+          <td>12 GB</td>
+          <td>ASRock A320M-DVS R4.0</td>
+          <td>550 W</td>
+          <td>120GB SSD</td>
+      </tr>
+      <tr>
+          <td>worker 1</td>
+          <td>Ryzen 5 4500</td>
+          <td>24 GB</td>
+          <td>ASRock A320M-DVS R4.0</td>
+          <td>550 W</td>
+          <td>450GB SSD, 1TB SSD</td>
+      </tr>
+      <tr>
+          <td>worker 2</td>
+          <td>Ryzen 5 4500</td>
+          <td>24 GB</td>
+          <td>ASRock A320M-DVS R4.0</td>
+          <td>550 W</td>
+          <td>450GB SSD, 1TB SSD</td>
+      </tr>
+      <tr>
+          <td>worker 3</td>
+          <td>Ryzen 5 4500</td>
+          <td>24 GB</td>
+          <td>ASRock A320M-DVS R4.0</td>
+          <td>550 W</td>
+          <td>450GB SSD, 1TB SSD</td>
+      </tr>
+  </tbody>
+</table>
+<p>Algunas métricas contables de lo que cuestan las piezas y poner a funcionar ciertas confioguraciones de cluster:</p>
+<h4 id="componentes">Componentes</h4>
+<ul>
+<li>Ryzen 3 4100: <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">~51,80€</span></li>
+<li>Ryzen 3 4100: <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">~155€</span></li>
+<li>4GB RAM: <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">21€</span></li>
+<li>8GB RAM: <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">~18,47€</span></li>
+<li>GigaByte A520M S2H: <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">58,95€</span></li>
+<li>ASRock A320M-DVS R4.0: <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">62,51€</span></li>
+<li>PSU (550W): <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">~29€</span></li>
+<li>120GB SSD:<style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation"> 14€</span></li>
+<li>1TB SSD: <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">58,99€</span></li>
+</ul>
+<h4 id="nodos">Nodos</h4>
+<ul>
+<li>Control plane cost (master*): <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">193,22€</span></li>
+<li>Worker node (worker*): <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">374,91€</span></li>
+</ul>
+<h4 id="diferentes-escenarios-de-clusters">Diferentes escenarios de clusters</h4>
+<ul>
+<li>Single node cluster: <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">374,91€</span></li>
+<li>Minimal cluster (1 control plane and 1 worker node): <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation"> 568,13€ </span></li>
+<li>Worker HA cluster (1 control plane and 2 worker nodes): <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation"> 943,04€ </span></li>
+<li>Minimal HA cluster (2 control planes and 2 worker nodes): <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation"> 1136,26€ </span></li>
+<li><strong>Current HA cluster (3 control planes and 3 worker nodes): <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation"> 1704,39€ </span></strong></li>
+</ul>
+<p>Lo que tenemos hasta ahora no son nada más que máquinas, para que se transformen en parte de un cluster de Kubernetes  hay que controlar tres pilaes: la energia, la persistencia de los datos y la configuración de la red. Por supuesto, hay muchas otras
+cosas, como por ejemplo el sistema de alarmado, una estrategia de disaster recovery, la seguridad&hellip; No obstante, si nos ceñimos al objetivo de crear un cluster &ldquo;minimamente&rdquo; funcional, hay que manejar los tres aspectos anteriores.</p>
+<h3 id="red-energética">Red energética</h3>
+<p>Busqué los planos de la red elećtrica de mi casa para revisar la energía máxima que entrega cada línea. La idea es confirmar que, al conecatr tantos ordenadores, el diferencial no salte por superar la carga máxima. Por eso hay que calcular primero
+cuantos dispositivos soporta cada línea con la siguiente fórmula:</p>
+<style>
+    .math-block {
+        margin: 1em 0;
+        border-left: 0.4em solid #d7ffaa;
+        padding: 0.5em 0.5em;
+        background-color: #272822;
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.12em;
+        overflow-x: auto;
+        color: #f8f8f2;
+        line-height: 1.6;
+    }
+
+    .math-block .mjx-block {
+        margin-bottom: 0.4em;
+    }
+
+</style>
+
+
+<div class="math-block">
+    
+$$
+amperios = \frac{watts}{voltios} \rightarrow A = \frac{W}{V} \rightarrow A = \frac{W}{240V \text{(por defecto en España)}}
+\\
+A_{\text{max psu}} = \frac{550W}{240V} = 2.29A
+$$
+
+</div>
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<p>Un nodo funcionando a máxima potencia (consumo de Watts), supone en total unos <style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">2.29A</span>. Pero cada fuente de alimentación no va a demandar el 100% de energia posible ya que los componentes que vamos
+a conectar no llegan a dicho límite, por eso hay que ajustar por nodo el consumo máximo real (<a href="https://www.geeknetic.es/calculadora-fuente-alimentacion/">página utilizada</a> para obtener los watts de cada componente).</p>
+<table>
+  <thead>
+      <tr>
+          <th>Rol</th>
+          <th>Watts máximos</th>
+          <th>Amperios máximos</th>
+          <th>Line de energía</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>master 1</td>
+          <td>154 W</td>
+          <td>0.64 A</td>
+          <td>Linea 1</td>
+      </tr>
+      <tr>
+          <td>master 2</td>
+          <td>154 W</td>
+          <td>0.64 A</td>
+          <td>Linea 2</td>
+      </tr>
+      <tr>
+          <td>master 3</td>
+          <td>154 W</td>
+          <td>0.64 A</td>
+          <td>Linea 2</td>
+      </tr>
+      <tr>
+          <td>worker 1</td>
+          <td>157 W</td>
+          <td>0.65 A</td>
+          <td>Linea 1</td>
+      </tr>
+      <tr>
+          <td>worker 2</td>
+          <td>157 W</td>
+          <td>0.65 A</td>
+          <td>Linea 1</td>
+      </tr>
+      <tr>
+          <td>worker 3</td>
+          <td>157 W</td>
+          <td>0.65 A</td>
+          <td>Linea 2</td>
+      </tr>
+      <tr>
+          <td>Router</td>
+          <td>~20 W</td>
+          <td>0.08 A</td>
+          <td>Linea 1</td>
+      </tr>
+      <tr>
+          <td>Switch</td>
+          <td>~20 W</td>
+          <td>0.08 A</td>
+          <td>Linea 1</td>
+      </tr>
+  </tbody>
+</table>
+<p>Cada línea ofrece unos 16 amperios, el consumo final de cada nodo solicitando la máxima energía teórica no supera lo esperado.</p>
+<style>
+    .math-block {
+        margin: 1em 0;
+        border-left: 0.4em solid #d7ffaa;
+        padding: 0.5em 0.5em;
+        background-color: #272822;
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.12em;
+        overflow-x: auto;
+        color: #f8f8f2;
+        line-height: 1.6;
+    }
+
+    .math-block .mjx-block {
+        margin-bottom: 0.4em;
+    }
+
+</style>
+
+
+<div class="math-block">
+    
+$$
+A_{\text{linea 1}} = \frac{ W_{\text {master 1}} + W_{\text {worker1}} + W_{\text {worker 2} } + W_{\text {Router}} + W_{\text {Switch}}}{240V} \approx 2,11A
+\\
+\text{Uso de la Linea 1} = \frac{ 2,11A }{ 16A } * 100 \approx 13,18\%
+\\
+A_{\text {linea 2}} = \frac{ W_{\text {master2}} + W_{\text {master3}} + W_{\text {worker3}} }{240V} \approx 1,93A
+\\
+\text{Uso de la Linea 2} = \frac{ 1,93A }{ 16A } * 100 \approx 12,06\%
+$$
+
+</div>
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<p>Gracias a todos estos cálculos pude confirmar que no se producirá ningún apagón en mi casa.</p>
+<h3 id="arquitectura-de-red">Arquitectura de red</h3>
+<p>Hay muchas maneras de diseñar la topología de una red. En esta caso decidí aislar el entorno donde se aloja el cluster de la red doméstica, para evitar interferencias. Para ello usé un router intermedio, creando asñí el conocido WAN-to-LAN: la subred
+192.168.1.0/24 se mantiene como red doméstica minetras que la subred 192.168.2.0/24 es donde se aloja el cluster. Para mantener una coherencia en la asignación de IP&rsquo;s asocié un rango de IP&rsquo;s con ciertos roles:</p>
+<ul>
+<li><style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">192.168.2.0</span>: Unassigned by now (<em>it would be another router to enable HA</em>)</li>
+<li><style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">192.168.2.1</span>: IP router</li>
+<li><style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">192.168.2.2 - 192.168.2.49</span>: DHCP</li>
+<li><style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">192.168.2.50 - 192.168.2.59</span>: Nodos control plane del cluster de Kubernetes</li>
+<li><style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">192.168.2.60</span>: IP virtual aisgnada al control plan con el rol de líder</li>
+<li><style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">192.168.2.61 - 192.168.2.89</span>: Nodos worker del cluster de Kubernetes</li>
+<li><style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">192.168.2.90 - 192.168.2.99</span>: Reservado para los sistemas de alamcenamiento de datos (<em>e.g. NAS</em>)</li>
+<li><style>
+    .math-operation {
+        font-family: 'Latin Modern Roman', serif;
+        font-size: 1.1em;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: white;
+    }
+</style>
+
+<span class="math-operation">192.168.2.100 - 192.168.2.255</span>: Sin asignar</li>
+</ul>
+<style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    <img src="/posts/how-my-on-premise-private-cloud-was-built/network-topology-1.png"/>
+</div>
+<p>Para crear un cluster de Kubernetes en HA no basta tan solo con tener varios nodos worker, también se necesita contar con varios control plane, asociando estos ultimos a una IP virtual. El funcionamiento es simple, si un nodo de tipo control plane
+se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para hacer funcionar algo así combiné dos herramientas amplaimente usadas, HaProxy y KeepAlived.</p>
+<p>Lo que ocurre por debajo es la siguiente secuencia:</p>
+<ol>
+<li>KeepAlived asigna el rol de líder a algún control plane disponible</li>
+</ol>
+<style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_1.png"/>
+</div>
+<ol start="2">
+<li>La IP virtual se asocia con el control plane líder del punto anterior. A partir de este momento nodo en custión es elñ encargado de comunicarse con los nodos worker.</li>
+</ol>
+<style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_2.png"/>
+</div>
+<ol start="3">
+<li>El control plane líder deja de dar servicio</li>
+</ol>
+<style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_3.png"/>
+</div>
+<ol start="4">
+<li>Los control plane que siguen funcionando empiezan a negociar quien será el nuevo líder. Una vez establecido, KeepAlived asociará la IP virtual al nuevo nodo líder.</li>
+</ol>
+<style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_4.png"/>
+</div>
+<p>Tanto HaProxy como KeepAlived se han de instalar en cada control plane. Los pasos para su instalación son los mismos, lo único que difire son los archivos de configuración:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apt -y update
+</span></span><span style="display:flex;"><span>apt -y install vim
+</span></span><span style="display:flex;"><span>apt -y install keepalived
+</span></span><span style="display:flex;"><span>apt -y install heproxy
+</span></span></code></pre></div><p>Contenido de /etc/haproxy/haproxy.cfg file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>global
+</span></span><span style="display:flex;"><span>log /dev/log  local0 warning
+</span></span><span style="display:flex;"><span>chroot      /var/lib/haproxy
+</span></span><span style="display:flex;"><span>pidfile     /var/run/haproxy.pid
+</span></span><span style="display:flex;"><span>maxconn     4000
+</span></span><span style="display:flex;"><span>user        haproxy
+</span></span><span style="display:flex;"><span>group       haproxy
+</span></span><span style="display:flex;"><span>daemon
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>stats socket /var/lib/haproxy/stats
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>defaults
+</span></span><span style="display:flex;"><span>  log global
+</span></span><span style="display:flex;"><span>  option  httplog
+</span></span><span style="display:flex;"><span>  option  dontlognull
+</span></span><span style="display:flex;"><span>  timeout connect 5000
+</span></span><span style="display:flex;"><span>  timeout client 50000
+</span></span><span style="display:flex;"><span>  timeout server 50000
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>frontend kube-apiserver
+</span></span><span style="display:flex;"><span>  # Se trata del puerto al que atacarán todos los nodos worker
+</span></span><span style="display:flex;"><span>  # No se puede configurar el puerto 6443 ya que entraría en conflicto con el servicio de kubeadm
+</span></span><span style="display:flex;"><span>  bind *:7443
+</span></span><span style="display:flex;"><span>  mode tcp
+</span></span><span style="display:flex;"><span>  option tcplog
+</span></span><span style="display:flex;"><span>  default_backend kube-apiserver
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>backend kube-apiserver
+</span></span><span style="display:flex;"><span>  mode tcp
+</span></span><span style="display:flex;"><span>  option tcplog
+</span></span><span style="display:flex;"><span>  option tcp-check
+</span></span><span style="display:flex;"><span>  balance roundrobin
+</span></span><span style="display:flex;"><span>  default-server inter 10s downinter 5s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
+</span></span><span style="display:flex;"><span>  # Lista de nodos control plane
+</span></span><span style="display:flex;"><span>  server kube-apiserver-1 192.168.2.51:6443 check
+</span></span><span style="display:flex;"><span>  server kube-apiserver-2 192.168.2.52:6443 check
+</span></span><span style="display:flex;"><span>  server kube-apiserver-3 192.168.2.53:6443 check
+</span></span></code></pre></div><p>Contenido de /etc/keepalived/keepalived.conf</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>global_defs {
+</span></span><span style="display:flex;"><span>  notification_email {
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  router_id LVS_DEVEL
+</span></span><span style="display:flex;"><span>  vrrp_skip_check_adv_addr
+</span></span><span style="display:flex;"><span>  vrrp_garp_interval 0
+</span></span><span style="display:flex;"><span>  vrrp_gna_interval 0
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>vrrp_script chk_haproxy {
+</span></span><span style="display:flex;"><span>  script &#34;killall -0 haproxy&#34;
+</span></span><span style="display:flex;"><span>  interval 2
+</span></span><span style="display:flex;"><span>  weight 2
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>vrrp_instance haproxy-vip {
+</span></span><span style="display:flex;"><span>  state BACKUP
+</span></span><span style="display:flex;"><span>  priority 100
+</span></span><span style="display:flex;"><span>  interface enp4s0
+</span></span><span style="display:flex;"><span>  virtual_router_id 60
+</span></span><span style="display:flex;"><span>  advert_int 1
+</span></span><span style="display:flex;"><span>  authentication {
+</span></span><span style="display:flex;"><span>  auth_type PASS
+</span></span><span style="display:flex;"><span>    auth_pass 1111
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  # IP del control plane que se esta configurando
+</span></span><span style="display:flex;"><span>  unicast_src_ip 192.168.2.51
+</span></span><span style="display:flex;"><span>  unicast_peer {
+</span></span><span style="display:flex;"><span>    # IP&#39;s de los otros control plane
+</span></span><span style="display:flex;"><span>    192.168.2.52
+</span></span><span style="display:flex;"><span>    192.168.2.53
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  virtual_ipaddress {
+</span></span><span style="display:flex;"><span>    # IP virtual con la que se comunicarán los worker
+</span></span><span style="display:flex;"><span>    192.168.2.60/24
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  track_script {
+</span></span><span style="display:flex;"><span>    chk_haproxy
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Como último paso hay que habilitar los servicios y arrancarlos:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl enable haproxy
+</span></span><span style="display:flex;"><span>systemctl enable keepalived
+</span></span><span style="display:flex;"><span>systemctl start haproxy
+</span></span><span style="display:flex;"><span>systemctl start keepalived
+</span></span></code></pre></div><h3 id="desplieuge-del-cluster-de-k8s">Desplieuge del cluster de K8S</h3>
+<p>Para desplegar Kubernetes utilicé una herramienta llamada KubeKey. Ha sido desarrollada por la comunidad KubeSphere, se trata de un CLI que simplifica la isntalación conectandose por SSH a cada nodo.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -sfL https://get-kk.kubesphere.io | VERSION<span style="color:#f92672">={</span>versión<span style="color:#f92672">}</span> sh -
+</span></span></code></pre></div><p>Antes de realizar la instalación hay que configurar un Yaml con todas las IP de los nodos y sus respectivos roles.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">kubekey.kubesphere.io/v1alpha2</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Cluster</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">sample</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">hosts</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Todos los nodos que conformarán el clsuter</span>
+</span></span><span style="display:flex;"><span>  - {<span style="color:#f92672">name: master1, address: 192.168.2.51, internalAddress: 192.168.2.51, user: master1, password</span>: <span style="color:#e6db74">&#34;&#34;</span>}
+</span></span><span style="display:flex;"><span>  - {<span style="color:#f92672">name: master2, address: 192.168.2.52, internalAddress: 192.168.2.52, user: master2, password</span>: <span style="color:#e6db74">&#34;&#34;</span>}
+</span></span><span style="display:flex;"><span>  - {<span style="color:#f92672">name: master3, address: 192.168.2.53, internalAddress: 192.168.2.53, user: master3, password</span>: <span style="color:#e6db74">&#34;&#34;</span>}
+</span></span><span style="display:flex;"><span>  - {<span style="color:#f92672">name: worker1, address: 192.168.2.61, internalAddress: 192.168.2.61, user: worker1, password</span>: <span style="color:#e6db74">&#34;&#34;</span>}
+</span></span><span style="display:flex;"><span>  - {<span style="color:#f92672">name: worker2, address: 192.168.2.62, internalAddress: 192.168.2.62, user: worker2, password</span>: <span style="color:#e6db74">&#34;&#34;</span>}
+</span></span><span style="display:flex;"><span>  - {<span style="color:#f92672">name: worker3, address: 192.168.2.63, internalAddress: 192.168.2.63, user: worker3, password</span>: <span style="color:#e6db74">&#34;&#34;</span>}
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">roleGroups</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">etcd</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Alias usados para los nodos control plane</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">master1</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">master2</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">master3</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">control-plane</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">master1</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">master2</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">master3</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">worker</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Alias usados para los nodos worker</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">worker1</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">worker2</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">worker3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">controlPlaneEndpoint</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">domain</span>: <span style="color:#ae81ff">cluster.noprod.local</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># IP virtual configurada previamente con KeepAlived y HaProxy</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">address</span>: <span style="color:#e6db74">&#34;192.168.2.60&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Puerto definido en HaProxi</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">port</span>: <span style="color:#ae81ff">7443</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">kubernetes</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">version</span>: <span style="color:#ae81ff">v1.23.10</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">clusterName</span>: <span style="color:#ae81ff">cluster.noprod</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">autoRenewCerts</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Orquestador de contenedores, se puede utilizar otro</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">containerManager</span>: <span style="color:#ae81ff">docker</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">etcd</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">type</span>: <span style="color:#ae81ff">kubekey</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">network</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Plugin de red de Kubernetes, se puede utilizar otro</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">plugin</span>: <span style="color:#ae81ff">flannel</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Red que utilizará el cluster para desplegar los contenedores. No puede entrar en conflicto con otras subredes (en mi caso 192.168.2.0/24).</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kubePodsCIDR</span>: <span style="color:#ae81ff">10.233.64.0</span><span style="color:#ae81ff">/18</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kubeServiceCIDR</span>: <span style="color:#ae81ff">10.233.0.0</span><span style="color:#ae81ff">/18</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">multusCNI</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">enabled</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">registry</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">privateRegistry</span>: <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">namespaceOverride</span>: <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">registryMirrors</span>: []
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">insecureRegistries</span>: []
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">addons</span>: []
+</span></span></code></pre></div><p>Para desplegar el clsuter tan solo hay que ejecutar este último comando:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>chmod +x kk
+</span></span><span style="display:flex;"><span>./kk create cluster -f <span style="color:#f92672">{</span>kube key cluster configuration<span style="color:#f92672">}</span>.yaml
+</span></span></code></pre></div><h3 id="persistencia-de-la-información">Persistencia de la información</h3>
+<ol>
+<li>Se deshabilita el mutlipath en cada nodo worker</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>vi /etc/multipath.conf
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>blacklist {
+</span></span><span style="display:flex;"><span>    devnode &#34;^sd[a-z0-9]+&#34;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="2">
+<li>Instalación de Longhorn</li>
+</ol>
+<p>La persistencia de la información es uno de los aspectos más desafiantes en los sistemas distribuidos. He probado muchas soluciones, y la que elegí fue mantener los datos replicados. En este enfoque, los datos se tratan como si fueran un pod:
+configuras el número deseado de réplicas y el sistema se encarga de que los datos permanezcan replicados en los discos de los nodos worker. Si un nodo se cae, un volumen persistente volverá a adjuntar los datos desde otro nodo disponible
+mientras se clona la copia de datos que sigue estando sana. Por eso se ha añadido un SSD adicional de 1 TB a cada nodo worker. Todo esto se logra utilizando Longhorn, aunque hay otras herramientas que permiten implementar la misma estrategia.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm repo add longhorn https://charts.longhorn.io
+</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span>kubectl create namespace longhorn-system
+</span></span><span style="display:flex;"><span>helm install longhorn longhorn/longhorn --namespace longhorn-system
+</span></span></code></pre></div><ol start="3">
+<li>Configuración de disco de los nodos worker</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>lsblk
+</span></span><span style="display:flex;"><span>fdisk /dev/vdb <span style="color:#75715e"># n, p, 1, w</span>
+</span></span><span style="display:flex;"><span>mkfs.ext4 /dev/&lt;SSD disk name&gt;
+</span></span><span style="display:flex;"><span>mkdir /mnt/ssd-1 <span style="color:#75715e"># Puede configurarse otro nombre</span>
+</span></span><span style="display:flex;"><span>mount /dev/vdb1 /mnt/ssd-1
+</span></span><span style="display:flex;"><span>vi /etc/fstab <span style="color:#75715e"># Hay que agregar la siguiente línea en /etc/fstab -&gt; &#34;/dev/vdb1 /mnt/ssd-1 ext4 defaults 0 0&#34;</span>
+</span></span><span style="display:flex;"><span>df -h
+</span></span></code></pre></div><style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    <img src="/posts/how-my-on-premise-private-cloud-was-built/longhorn_1.png"/>
+</div>
+<ol start="4">
+<li>Definición del manifiesto del PVC</li>
+</ol>
+<p>Cada vez que se quiera replicar el dato en diferentes nodos hay que usar el storage class de Longhorn apuntando a un volumen. El volumen se puede crear tanto desde la UI como automáticamente cuando el pv solicita el recurso.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Manifiesto de ejemplo de un PV</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolume</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gitea-ha-pv-data</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">accessModes</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#ae81ff">ReadWriteOnce</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">capacity</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">storage</span>: <span style="color:#ae81ff">20Gi</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">claimRef</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolumeClaim</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gitea-ha-pvc-data</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">infra</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">csi</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">driver</span>: <span style="color:#ae81ff">driver.longhorn.io</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">fsType</span>: <span style="color:#ae81ff">ext4</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">volumeHandle</span>: <span style="color:#ae81ff">gitea-ha</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">storageClassName</span>: <span style="color:#ae81ff">longhorn</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">volumeMode</span>: <span style="color:#ae81ff">Filesystem</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Manifiesto de ejemplo de un PVC</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolumeClaim</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gitea-ha-pvc-data</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">infra</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">accessModes</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">ReadWriteOnce</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">resources</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">requests</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">storage</span>: <span style="color:#ae81ff">20Gi</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">storageClassName</span>: <span style="color:#ae81ff">longhorn</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">volumeMode</span>: <span style="color:#ae81ff">Filesystem</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">volumeName</span>: <span style="color:#ae81ff">gitea-ha-pv-data</span>
+</span></span></code></pre></div><h3 id="exposición-de-servicios">Exposición de servicios</h3>
+<p>Hasta ahora tenemos montado un clúster de Kubernetes con alta disponibilidad, interesante, ¿Verdad? Sin embargo, sin exponer los servicios al exterior, solo es un monton de máquinas sin mucha utilidad.</p>
+<p>Existen dos formas pde hacer accesibles los servicios fuera del clúster: mediante NodePort o LoadBalancer. Usar NodePort no tiene mucho sentido en un entorno HA, ya que el servicio queda vinculado a un único nodo, lo que introduce un posible punto
+único de fallo. Una alternativa sería montar un balanceador de carga con HAProxy y KeepAlived, usando un nuevo grupo de máquinas. Aunque esto funcionaría, también implica un mayor coste, ya que necesitarías al menos dos nuevos ordenadores. Una opción
+más barata consiste en utilizar directamente los propios nodos worker como balanceadores de carga, aprovechando OpenELB.</p>
+<p>Al igual que antes, hay muchas herramientas disponibles. En mi caso, he seleccionado <a href="https://openelb.io/docs/concepts/layer-2-mode/">OpenELB en modo Layer 2</a> para asignar una IP libre de mi subred 192.168.2.0/24 al Ingress. A grandes rasgos, así es
+cómo funciona:</p>
+<ul>
+<li>OpenELB asigna una IP virtual perteneciente a la subred real (no a la red superpuesta de Kubernetes) al servicio.</li>
+<li>El router añade esa IP a su tabla ARP.</li>
+<li>La IP virtual se vincula a uno de los nodos worker. Si ese nodo se cae, OpenELB reasigna la IP a otro nodo worker que esté operativo.</li>
+</ul>
+<p>Para instalar OpenELB se pueden usar los manifiestos que hay disponibles en la documentación.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.0/deploy/static/provider/cloud/deploy.yaml
+</span></span><span style="display:flex;"><span>kubectl apply -f https://raw.githubusercontent.com/openelb/openelb/master/deploy/openelb.yaml
+</span></span><span style="display:flex;"><span>kubectl -n openelb-system get pod
+</span></span></code></pre></div><p>La subred usada por OpenELB, al asignar las IP virtuales, tiene que especificarse mediante el CRD Eip:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">network.kubesphere.io/v1alpha2</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Eip</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">layer2-eip</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Subred a la que se atará el ingress</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">address</span>: <span style="color:#ae81ff">192.168.2.80-192.168.2.200</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Interfaz de red física de los nodos worker</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">interface</span>: <span style="color:#ae81ff">enp6s0</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">layer2</span>
+</span></span></code></pre></div><p>Cada vez que se despliegue un servicio de tipo LoadBalances, OpenELB le asignará una IP de la subred previamente configurada.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">layer2-svc</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">lb.kubesphere.io/v1alpha1</span>: <span style="color:#ae81ff">openelb</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Anotaciones necesarias si queremos que OpenELB se encargue de asignar la IP externa</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">protocol.openelb.kubesphere.io/v1alpha1</span>: <span style="color:#ae81ff">layer2</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">eip.openelb.kubesphere.io/v1alpha2</span>: <span style="color:#ae81ff">layer2-eip</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">layer2-openelb</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">type</span>: <span style="color:#ae81ff">LoadBalancer</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">http</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">externalTrafficPolicy</span>: <span style="color:#ae81ff">Cluster</span>
+</span></span></code></pre></div><p>En este caso concreto, se ha asignado la IP 192.168.2.80 como dirección externa porque es la primera dentro del rango de direcciones EIP.</p>
+<style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    <img src="/posts/how-my-on-premise-private-cloud-was-built/openelb_1.png"/>
+</div>
+<p>El último paso para tener una solución sólida consiste en asegurar el acceso al Ingress mediante una autoridad certificadora (CA). Se puede hacer con cert-manager, un servicio integrado en Kubernetes que gestiona automáticamente los certificados.
+Primero se tiene que crear una clave con la que firmar los certificados usando la CA.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># Para crear la clave primaria</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">openssl genrsa -out ca.key 4096</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Para firmar cualquier certificado con la clave primaria de la CA</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">openssl req -new -x509 -sha256 -days 365 -key ca.key -out ca.crt</span>
+</span></span></code></pre></div><p>cert-manager almacena el certificado de la CA a través del CRD ClusterIssuer.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">cert-manager.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterIssuer</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">selfsigned</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ca</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">secretName</span>: <span style="color:#ae81ff">ca-cert-manager</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Secret</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">ca-cert-manager</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">cert-manager</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">type</span>: <span style="color:#ae81ff">Opaque</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">tls.crt</span>: <span style="color:#75715e"># Contenido en Base64-encoded del ca.crt (e.g., cat ca.crt | base64 -w 0)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">tls.key</span>: <span style="color:#75715e"># Contenido en Base64-encoded del ca.key (e.g., cat ca.key | base64 -w 0)</span>
+</span></span></code></pre></div><p>Para exponer los servicio fuera del cluster, hay que combinar Nginx y cert-manager al definir el manifiesto del Ingress.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Con esta anotación se le indica a cert-manager que utilice el ClusterIssuer especificado</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">cert-manager.io/cluster-issuer</span>: <span style="color:#ae81ff">ca-cluster-issuer</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gitea-ha-gitea-ha</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">infra</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Especifica que este Ingress debe ser gestionado por el controlador de Ingress de NGINX.</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingressClassName</span>: <span style="color:#ae81ff">nginx</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">host</span>: <span style="color:#ae81ff">pre.gitea.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gitea-ha-gitea-ha</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">3000</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">tls</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">hosts</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># cert-manager almacenará el certificado TLS emitido en este secreto.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Si no existe, cert-manager lo creará y lo renovará automáticamente.</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">pre.gitea.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">secretName</span>: <span style="color:#ae81ff">gitea-ha-gitea-ha-tls</span>
+</span></span></code></pre></div><h1 id="capítulo-3-la-solución-se-transforma-en-un-problema">Capítulo 3: La solución se transforma en un problema</h1>
+<p>Siguiendo esta guía, casi da la impresión de que cualquiera puede montar un clúster de Kubernetes con alta disponibilidad comprando unas cuantas tostadoras. Suena fácil, ¿verdad? Pero ya lo advertí al principio de este artículo: crear y mantener
+un clúster de Kubernetes no es nada sencillo, especialmente cuando se ejecuta sobre infraestructura on-premise, con los recursos justos. He tenido que lidiar con muchos problemas solo para mantener el entorno funcionando, la mayoría como consecuencia
+de mis malas decisiones.</p>
+<p>En un momento dado, los nodos worker empezaron a reiniciarse aleatoriamente con un error de segmentación de memoria del kernel. Pasé mucho tiempo intentando averiguar la causa del problema. Tras varias semanas sin encontrar el origen, tiré la toalla.
+Decidí copiar los datos de los volúmenes persistentes a mi ordenador personal y reinstalar todo el clúster desde cero. Pero&hellip; el error seguía apareciendo. Entonces empecé a repasar todos los cambios que había hecho recientemente, y me di cuenta del
+verdadero problema: una ranura de RAM que había añadido no hacía mucho. Estaba funcionando a una frecuencia distinta al resto. Sí, me pasé horas investigand&hellip; y la solución era tan simple como reapsar todas las modificaciones que habia realizado.</p>
+<p>Otro problema fue usar una conexión Molex a SATA. Al principio, antes de utilizar Longhorn, todos los datos se almacenaban en un host independiente que actuaba como almacenamiento de Kubernetes, usando NFS. La placa base de ese host solo tenía
+seis puertos SATA, así que utilicé un adaptador Molex a SATA para aumentar la capaacidad de los discos y poder montar así un RAID. Con el tiempo, uno de los discos falló. Estoy bastante seguro de que fue por la alimentación inestable que proporcionaba
+la conexión Molex. En su momento parecía una solución rápida y efectiva, no obstante, acabó comprometiendo la estabilidad de toda la infraestructura y de los datos.</p>
+<h1 id="chapter-4-conclusions">Chapter 4: Conclusions</h1>
+<p>Como ingeniero, debes evaluar con cuidado si montar un clúster de Kubernetes on-premise realmente es la mejor opción. La lista de problemas que pueden surgir es interminable, enfrentarte a ellos consume muchísimo tiempo y energía. Aun así, si decides
+construir uno, el conocimiento que obtendrás será muy valioso. Las lecciones que se aprenden al enfrentarse al reto de gestionar tu propio clúster son insustituibles y sin duda influirán positivamente en tu forma de tomar decisiones en futuros
+proyectos.</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

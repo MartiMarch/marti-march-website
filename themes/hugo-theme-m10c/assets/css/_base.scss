@@ -1,0 +1,168 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  line-height: 1.6;
+}
+
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: $dark-color;
+  color: $light-color;
+}
+
+h4, h5, h6 {
+  color: $lightest-color;
+  font-size: 1.2em;
+}
+
+h1 {
+  font-size: 1.8em;
+}
+
+h2 {
+  font-size: 1.7em;
+}
+
+h3 {
+  color: $lightest-color;
+  font-size: 1.6em;
+}
+
+a {
+  font-size: 1.2em;
+  color: $primary-color;
+  transition: color 0.35s;
+  text-decoration: none;
+
+  &:hover {
+    color: $lightest-color;
+  }
+}
+
+p {
+  font-size: 1.2em;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+p a, li a, span a {
+  font-size: inherit;
+}
+
+
+// Browsers seem to use a smaller default font-size with monospaced code
+// blocks (like 80% of the size of normal text) and that looks pretty bad with
+// small inline code-blocks in the middle of normal text (mainly because of
+// the very noticeable difference in x-height). This CSS corrects that problem.
+code {
+  font-family: monospace,monospace;
+  font-size: 1.2em;
+  color: rgba($light-color, .8);
+
+  // Fixes iOS font sizing anomaly
+  text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+pre {
+  font-size: 1rem;
+  line-height: 1.2em;
+  margin: 0;
+  overflow: auto;
+
+  // A larger monospaced block of text (that isn't mixed with normal text)
+  // generally looks heavier than normal text with the same font size. For this
+  // reason using a smaller monospaced font size makes sense in this situation.
+  code {
+    font-size: 1em;
+  }
+}
+
+::selection {
+  background: rgba($light-color, .25);
+}
+::-moz-selection {
+  background: rgba($light-color, .25);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.95rem;
+}
+
+table th, table td {
+  border: 1px solid $primary-color;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+table th {
+  background-color: $darkest-color;
+  font-weight: bold;
+}
+
+ul {
+  font-size: 1.2rem;
+  list-style: none;
+  padding-left: 2em;
+}
+
+ul li::before {
+  content: '\2022';
+  font-size: 1.1rem;
+  color: $primary-color;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
+ol li {
+  font-size: 1.2em;
+}
+
+.menu-hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, $primary-color, transparent);
+  margin: 2em 0;
+  opacity: 0.6;
+}
+
+.span-languages {
+  color: $primary-color;
+  margin: 0 1em;
+}
+
+article {
+  max-width: 80%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+
+@media (min-width: 959px) {
+  article {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 1300px) and (max-width: 1920px) {
+  article {
+    max-width: 80%;
+  }
+}
+
+@media (min-width: 1921px) {
+  article {
+    max-width: 75%;
+  }
+}
+
+
