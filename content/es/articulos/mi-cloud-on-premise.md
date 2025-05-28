@@ -23,7 +23,7 @@ Si también tienes en mente emplear un cloud privado on-premise, has de saber qu
 # Capítulo 1: El problema
 
 Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar
-mis recursos estratégicamente o acabaré convirtiéndome en un sintecho. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones
+mis recursos estratégicamente o podría llegar a derrochar mucho tiempo y dinero. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones
 legales relacionadas con la titularidad y las condiciones de uso, es decir, con la propiedad intelectual. Compartir código abiertamente, sin establecer ninguna restricción, puede llegar a ser una mala idea. Soy consciente de que, muy probablemente, 
 jamás logre monetizar ninguna de mis soluciones... pero, ¿quién sabe?
 
