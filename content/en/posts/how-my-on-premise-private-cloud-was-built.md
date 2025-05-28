@@ -23,7 +23,7 @@ If you have in mind doing something like this, hosting your own infrastructure a
 
 # Chapter 1: The problem
 
-I enjoy creating new solutions and trying to make money. But I'm just one person, not a company. That means I need to optimize my spending, otherwise, I could end up homeless. Trying to build something can get very expensive, and in 
+I enjoy creating new solutions and trying to make money. But I'm just one person, not a company. That means I need to optimize my spending, otherwise, I could end up wasting a lot of time and money. Trying to build something can get very expensive, and in 
 the IT world, it can become massively expensive. So, here's my first problem: money (yeah, the usual one). The second problem is about intellectual property. When someone is working on a new solution, sharing it publicly without considering
 the legal side can be risky—especially if there’s any hope of future profit. I know, I know... I'm aware I probably won't make a dime, but, who knows?
 
