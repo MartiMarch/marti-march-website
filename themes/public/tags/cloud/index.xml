@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cloud on Marti March</title>
+    <link>http://localhost:1313/tags/cloud/</link>
+    <description>Recent content in Cloud on Marti March</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 06 May 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/cloud/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How my on premise private cloud was built</title>
+      <link>http://localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/</link>
+      <pubDate>Tue, 06 May 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/</guid>
+      <description>&lt;h1 id=&#34;preface&#34;&gt;Preface&lt;/h1&gt;&#xA;&lt;p&gt;In this post, I&amp;rsquo;m going to try to explain why and how I decided to build a private cloud on-premise using some cheap computers.&lt;/p&gt;&#xA;&lt;p&gt;If you have in mind doing something like this, hosting your own infrastructure at home, let me confess: it means choose the hard way&amp;hellip; Don’t say I didn’t warn you.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/#chapter-1-the-problem&#34;&gt;Chapter 1: The problem&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/#chapter-2-the-solution&#34;&gt;Chapter 2: The solution&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/#energy-architecture&#34;&gt;Energy architecture&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/#network-architecture&#34;&gt;Network architecture&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/#deploying-k8s-cluster&#34;&gt;Deploying K8S cluster&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/#persistence-of-data&#34;&gt;Persistence of data&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/#exposing-services&#34;&gt;Exposing services&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/#chapter-3-the-solution-becomes-the-problem&#34;&gt;Chapter 3: The solution becomes the problem&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/#chapter-4-conclusions&#34;&gt;Chapter 4: Conclusions&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h1 id=&#34;chapter-1-the-problem&#34;&gt;Chapter 1: The problem&lt;/h1&gt;&#xA;&lt;p&gt;I enjoy creating new solutions and trying to make money. But I&amp;rsquo;m just one person, not a company. That means I need to optimize my spending, otherwise, I could end up homeless. Trying to build something can get very expensive, and in&#xA;the IT world, it can become massively expensive. So, here&amp;rsquo;s my first problem: money (yeah, the usual one). The second problem is about intellectual property. When someone is working on a new solution, sharing it publicly without considering&#xA;the legal side can be risky—especially if there’s any hope of future profit. I know, I know&amp;hellip; I&amp;rsquo;m aware I probably won&amp;rsquo;t make a dime, but, who knows?&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

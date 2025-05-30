@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Marti March</title>
+    <link>http://localhost:1313/es/articulos/</link>
+    <description>Recent content on Marti March</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Tue, 06 May 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/es/articulos/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cómo construí mi cloud privado sobre infraestructura on-premise</title>
+      <link>http://localhost:1313/es/articulos/mi-cloud-on-premise/</link>
+      <pubDate>Tue, 06 May 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/es/articulos/mi-cloud-on-premise/</guid>
+      <description>&lt;h1 id=&#34;introducción&#34;&gt;Introducción&lt;/h1&gt;&#xA;&lt;p&gt;En este artículo voy a tratar de explciar cómo y porqué decidí crear un cloud privado sobre una infraestructura on-premise, usando ordenadores lo más baratos posibles.&lt;/p&gt;&#xA;&lt;p&gt;Si también tienes en mente emplear un cloud privado on-premise, has de saber que tiene cierto grado de complejidad y se requieren ciertos conocimientos previos de red, Kubernetes y Linux.&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-1-el-problema&#34;&gt;Capítulo 1: El problema&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-2-la-soluci%c3%b3n&#34;&gt;Capítulo 2: La solución&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/es/articulos/mi-cloud-on-premise/#red-energ%c3%a9tica&#34;&gt;Red energética&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/es/articulos/mi-cloud-on-premise/#arquitectura-de-red&#34;&gt;Arquitectura de red&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/es/articulos/mi-cloud-on-premise/#desplieuge-del-cluster-de-k8s&#34;&gt;Despliegue del cluster de k8s&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/es/articulos/mi-cloud-on-premise/#persistencia-de-la-informaci%c3%b3n&#34;&gt;Persistencia de la información&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-3-la-soluci%c3%b3n-se-transforma-en-un-problema&#34;&gt;Capítulo 3: La solución se transforma en un problema&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;http://localhost:1313/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-4-conclusiones&#34;&gt;Capítulo 4: Colcusiones&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h1 id=&#34;capítulo-1-el-problema&#34;&gt;Capítulo 1: El problema&lt;/h1&gt;&#xA;&lt;p&gt;Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar&#xA;mis recursos estratégicamente o acabaré convirtiéndome en un sintecho. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones&#xA;legales relacionadas con la titularidad y las condiciones de uso, es decir, con la propiedad intelectual. Compartir código abiertamente, sin establecer ninguna restricción, puede llegar a ser una mala idea. Soy consciente de que, muy probablemente,&#xA;jamás logre monetizar ninguna de mis soluciones&amp;hellip; pero, ¿quién sabe?&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

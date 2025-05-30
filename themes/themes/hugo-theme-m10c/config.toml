@@ -1,0 +1,94 @@
+[pagination]
+  pagerSize = 8
+
+defaultContentLanguage = "es"
+defaultContentLanguageInSubdir = true
+
+[languages]
+  [languages.es]
+    languageName = "Español"
+    weight = 1
+    title = "Marti March"
+    contentDir = "content/es"
+  languageCode = "en-US"
+
+  [languages.en]
+    languageName = "English"
+    weight = 2
+    title = "Marti March"
+    contentDir = "content/en"
+    languageCode = "en-US"
+
+[module]
+  [module.hugoVersion]
+    extended = true
+    min = "0.128.0"
+
+[[params.social]]
+  icon = "brand-github"
+  name = "Personal GitHub"
+  url = "https://github.com/MartiMarch"
+[[params.social]]
+  icon = "brand-linkedin"
+  name = "Linkedin"
+  url = "https://www.linkedin.com/in/mart%C3%AD-march"
+
+[params.style]
+  darkestColor = "#1d1d1d"
+  darkColor = "#40443e"
+  lightColor = "#ffffff"
+  lightestColor = "#96c85d"
+  #lightestColor = "#55ab81"
+  primaryColor = "#d7ffaa"
+  #primaryColor = "#55ab81"
+
+[menu]
+
+  [[menu.main]]
+    identifier = "sobre-mi"
+    name = "Sobre mí"
+    url = "/es/sobre-mi"
+    weight = 1
+    [menu.main.params]
+      language = "es"
+  [[menu.main]]
+    identifier = "articulos"
+    name = "Últimos artículos"
+    url = "/es/articulos/"
+    weight = 2
+    [menu.main.params]
+      language = "es"
+  [[menu.main]]
+    identifier = "intereses"
+    name = "Intereses"
+    url = "/es/intereses"
+    weight = 3
+    [menu.main.params]
+      language = "es"
+
+  [[menu.main]]
+    identifier = "about-me"
+    name = "About me"
+    url = "/en/about-me"
+    weight = 1
+    [menu.main.params]
+      language = "en"
+  [[menu.main]]
+    identifier = "posts"
+    name = "Last posts"
+    url = "/en/posts/"
+    weight = 2
+    [menu.main.params]
+      language = "en"
+  [[menu.main]]
+    identifier = "interests"
+    name = "Interests"
+    url = "/en/interests"
+    weight = 3
+    [menu.main.params]
+      language = "en"
+
+[params]
+  description = " "
+  author = "Marti March"
+  avatar = "user-photo.jpeg"
