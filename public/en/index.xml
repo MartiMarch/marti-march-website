@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Ens on Marti March</title>
-    <link>http://localhost:1313/en/</link>
-    <description>Recent content in Ens on Marti March</description>
+    <title>Ens on Martí March</title>
+    <link>//localhost:1313/en/</link>
+    <description>Recent content in Ens on Martí March</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 05 May 2025 23:49:44 +0200</lastBuildDate>
-    <atom:link href="http://localhost:1313/en/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//localhost:1313/en/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>About Me</title>
-      <link>http://localhost:1313/en/about-me/</link>
+      <link>//localhost:1313/en/about-me/</link>
       <pubDate>Mon, 05 May 2025 23:49:44 +0200</pubDate>
-      <guid>http://localhost:1313/en/about-me/</guid>
+      <guid>//localhost:1313/en/about-me/</guid>
       <description>&lt;p&gt;Hi 👋&lt;/p&gt;&#xA;&lt;p&gt;My name is Marti March. I work across various roles such as DevOps engineer, Backend, SRE, Platform Engineer, Sysadmin&amp;hellip; It&amp;rsquo;s not always easy to define what I do with a single role, especially with so many overlapping responsibilities&#xA;in today’s tech landscape.&lt;/p&gt;&#xA;&lt;p&gt;I implement CI/CD pipelines, design disaster recovery plans, set up high-availability systems, optimize the speed of deploying releases, enable mechanisms to test every change before promoting to production, contribute to building internal development&#xA;platforms, use GitOps to achieve a real-time IaC, reduce the cognitive load of developers&amp;hellip; Beyond my role, my job consists of two main tasks: automating repetitive tasks that don&amp;rsquo;t add real value and take up a lot of time, and keeping production running&#xA;smoothly.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Interests</title>
-      <link>http://localhost:1313/en/interests/</link>
+      <link>//localhost:1313/en/interests/</link>
       <pubDate>Mon, 05 May 2025 23:49:44 +0200</pubDate>
-      <guid>http://localhost:1313/en/interests/</guid>
-      <description>&lt;p&gt;My professional experience began with a simple question: how is it possible to keep a computer running without downtime? That initial curiosity led me to join the DevOps world. I learned the fundamentals of the software lifecycle and infrastructure.&#xA;Over time, my role evolved, and I worked as a DevOps Engineer, Site Reliability Engineer, and Platform Engineer.&lt;/p&gt;&#xA;&lt;p&gt;I enjoy programming, so I often solve problems by combining infrastructure and CI/CD with backend development principles. I&amp;rsquo;m currently learning about Kubernetes Operators, event-driven architecture and distributed systems to level up my skills and be&#xA;able to build flexible solutions at massive scale.&lt;/p&gt;</description>
+      <guid>//localhost:1313/en/interests/</guid>
+      <description>&lt;p&gt;My professional experience began with a simple question: how is it possible to keep a computer running without downtime? That initial curiosity led me join DevOps world. I learned the fundamentals of software lifecycle and infrastructure.&#xA;Over time, my role evolved, and I worked as a DevOps Engineer, Site Reliability Engineer, and Platform Engineer.&lt;/p&gt;&#xA;&lt;p&gt;I enjoy programming, so I often solve problems by combining infrastructure and CI/CD with backend development principles. I&amp;rsquo;m currently learning about Kubernetes Operators, event-driven architecture and distributed systems to level up my skills and be&#xA;able to build flexible solutions at massive scale.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

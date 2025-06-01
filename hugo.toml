@@ -1,4 +1,3 @@
-baseURL = 'https://www.martimarch.org/'
 languageCode = 'en-us'
-title = 'Marti March'
+title = 'Martí March'
 theme = "hugo-theme-m10c"

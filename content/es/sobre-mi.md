@@ -6,26 +6,26 @@ lang = 'es'
 
 Hola 👋
 
-Mi nombre es Marti March. Laboralmente ejerzo diversos roles: DevOps, Backend, SRE, Platform Engineer, SysAdmin... No siempre es fácil acotar lo que hago con un solo rol, especialmente con tantas responsabilidades que se superponen en el
+Mi nombre es Martí March. Profesionalmente ejerzo diversos roles: DevOps, Backend, SRE, Platform Engineer, SysAdmin... No siempre es fácil acotar lo que hago con un solo rol, especialmente con tantas responsabilidades que se superponen en el
 panorama tecnológico actual.
 
 Implementar pipelines de CI/CD, diseñar el Disaster Recovery , configurar sistemas de alta disponibilidad, optimizar la velocidad de los despliegues, habilitar mecanismos para probar cada cambio antes de promocionar a producción, 
-contribuir a construir plataformas internas para los desarrollores, utilizar GitOps para lograr una IaC en tiempo real, reducir la carga cognitiva de los desarrolladores... Más allá del rol, mi trabajo se resume en dos tareas principales:
-automatizar tareas repetitivas que no aportan valor real y consumen mucho tiempo, y mantener en functionamiento producción.
+contribuir a construir plataformas internas para los desarrolladores, utilizar GitOps para lograr una IaC en tiempo real, reducir la carga cognitiva de los desarrolladores... Más allá del rol, mi trabajo se resume en dos tareas principales:
+automatizar tareas repetitivas que no añaden valor real y consumen muchos recursos, y mantener en funcionamiento producción.
 
 ### Experiencia profesional
 
 #### [Mercadona](https://www.mercadona.es/) · {{< mathematics/soft-inline >}}14/06/2023-22/05/2025{{< /mathematics/soft-inline >}}
 
 - DevHub, plataforma interna de Mercadona · {{< mathematics/soft-inline >}}01/02/2024-22/05/2025{{< /mathematics/soft-inline >}}  
-  Contribuí a la plataforma interna que permite a los product owners gestionar el ciclo de vida operativo de sus aplicaciones.  
+  Participé en el desarrollo de la plataforma interna que permite a los product owners gestionar el ciclo de vida operativo de sus aplicaciones.  
   {{< tags/tag "Platform Engineer" >}} {{< tags/tech-tag "Kubernetes" >}} {{< tags/tech-tag "Argo Workflows" >}} {{< tags/tech-tag "Python" >}} {{< tags/tech-tag "Spring Boot" >}} {{< tags/tech-tag "Kafka" >}} {{< tags/tech-tag "Postgres" >}} {{< tags/tech-tag "Spinnaker" >}}
 
 <!-- -->
 
-- Pipelines para el CI/CD de aplciaciones nativas del cloud · {{< mathematics/soft-inline >}}14/06/2023-05/02/2025{{< /mathematics/soft-inline >}}  
+- Pipelines para el CI/CD de aplicaciones nativas del cloud · {{< mathematics/soft-inline >}}14/06/2023-05/02/2025{{< /mathematics/soft-inline >}}  
   Desarrollé pipelines a gran escala para gestionar el ciclo de vida de microservicios basados en la nube, con aproximadamente 15,000 despliegues semanales, dando servicio a 2,000 desarrolladores. Para ello colaboré con distintos equipos de TI,
-  agregando funcionalidades a los proceso de validación de las promociones entre entornos.  
+  agregando funcionalidades a los procesos de validación de las promociones entre entornos.  
   {{< tags/tag "DevOps" >}} {{< tags/tech-tag "Cloudbess" >}} {{< tags/tech-tag "Kubernetes" >}} {{< tags/tech-tag "Spinnaker" >}} {{< tags/tech-tag "groovy" >}} {{< tags/tech-tag "artifactory" >}} {{< tags/tech-tag "GCP" >}} {{< tags/tech-tag "GitLab" >}}
 
 #### [Disid](https://www.disid.com/) · {{< mathematics/soft-inline >}}06/07/2022–06/06/2023{{< /mathematics/soft-inline >}}
@@ -50,13 +50,13 @@ automatizar tareas repetitivas que no aportan valor real y consumen mucho tiempo
 <!-- -->
 
 - Ferrovial · {{< mathematics/soft-inline >}}01/09/2020–01/12/2021{{< /mathematics/soft-inline >}}  
-  Mantuve un conjunto de clústeres Kubernetes con alta disponibilidad alojados en IBM Cloud. Desarrollé pipelines de CI/CD para microservicios de Spring Cloud Data Flow. Migré del cloud de IBM al cloud de Azure.
+  Mantuve un conjunto de clústeres Kubernetes con alta disponibilidad alojados en IBM Cloud. Desarrollé pipelines de CI/CD para microservicios de Spring Cloud Data Flow. Migré del cloud de IBM al cloud de Azure.  
   {{< tags/tech-tag "Prometheus" >}} {{< tags/tech-tag "Flux 2.0" >}} {{< tags/tech-tag "Azure" >}} {{< tags/tech-tag "Azure Devops" >}}  
 
 <!-- -->
 
-- Mercadona · {{< mathematics/soft-inline >}}01/12/2021–06/06/2022{{< /mathematics/soft-inline >}}
-  Monitoreé la salud de los dispositivos (balanzas) para evtiar tiempos de inactividad.
+- Mercadona · {{< mathematics/soft-inline >}}01/12/2021–06/06/2022{{< /mathematics/soft-inline >}}  
+  Monitoreé la salud de los dispositivos (balanzas) para evitar tiempos de inactividad.  
   {{< tags/tag "SysAdmin" >}} {{< tags/tech-tag "MySQL" >}}
 
 <!-- -->

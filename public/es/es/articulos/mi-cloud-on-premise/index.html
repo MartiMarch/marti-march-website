@@ -15,16 +15,16 @@
     
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Cómo construí mi cloud privado sobre infraestructura on-premise">
-  <meta name="twitter:description" content="Introducción En este artículo voy a tratar de explciar cómo y porqué decidí crear un cloud privado sobre una infraestructura on-premise, usando ordenadores lo más baratos posibles.
+  <meta name="twitter:description" content="Introducción En este artículo voy a tratar de explicar cómo y por qué decidí crear un cloud privado sobre una infraestructura on-premise, usando los ordenadores más baratos posibles.
 Si también tienes en mente emplear un cloud privado on-premise, has de saber que tiene cierto grado de complejidad y se requieren ciertos conocimientos previos de red, Kubernetes y Linux.
-Capítulo 1: El problema Capítulo 2: La solución Red energética Arquitectura de red Despliegue del cluster de k8s Persistencia de la información Capítulo 3: La solución se transforma en un problema Capítulo 4: Colcusiones Capítulo 1: El problema Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar mis recursos estratégicamente o acabaré convirtiéndome en un sintecho. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones legales relacionadas con la titularidad y las condiciones de uso, es decir, con la propiedad intelectual. Compartir código abiertamente, sin establecer ninguna restricción, puede llegar a ser una mala idea. Soy consciente de que, muy probablemente, jamás logre monetizar ninguna de mis soluciones… pero, ¿quién sabe?">
+Capítulo 1: El problema Capítulo 2: La solución Red energética Arquitectura de red Despliegue del cluster de k8s Persistencia de la información Capítulo 3: La solución se transforma en un problema Capítulo 4: Conclusiones Capítulo 1: El problema Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar mis recursos estratégicamente o podría derrochar demasiados recursos. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones legales relacionadas con la titularidad y las condiciones de uso, es decir, con la propiedad intelectual. Compartir código abiertamente, sin establecer ninguna restricción, puede llegar a ser una mala idea. Soy consciente de que, muy probablemente, jamás logre monetizar ninguna de mis soluciones… pero, ¿quién sabe?">
 
-    <meta property="og:url" content="http://localhost:1313/es/es/articulos/mi-cloud-on-premise/">
+    <meta property="og:url" content="//localhost:1313/es/es/articulos/mi-cloud-on-premise/">
   <meta property="og:site_name" content="Marti March">
   <meta property="og:title" content="Cómo construí mi cloud privado sobre infraestructura on-premise">
-  <meta property="og:description" content="Introducción En este artículo voy a tratar de explciar cómo y porqué decidí crear un cloud privado sobre una infraestructura on-premise, usando ordenadores lo más baratos posibles.
+  <meta property="og:description" content="Introducción En este artículo voy a tratar de explicar cómo y por qué decidí crear un cloud privado sobre una infraestructura on-premise, usando los ordenadores más baratos posibles.
 Si también tienes en mente emplear un cloud privado on-premise, has de saber que tiene cierto grado de complejidad y se requieren ciertos conocimientos previos de red, Kubernetes y Linux.
-Capítulo 1: El problema Capítulo 2: La solución Red energética Arquitectura de red Despliegue del cluster de k8s Persistencia de la información Capítulo 3: La solución se transforma en un problema Capítulo 4: Colcusiones Capítulo 1: El problema Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar mis recursos estratégicamente o acabaré convirtiéndome en un sintecho. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones legales relacionadas con la titularidad y las condiciones de uso, es decir, con la propiedad intelectual. Compartir código abiertamente, sin establecer ninguna restricción, puede llegar a ser una mala idea. Soy consciente de que, muy probablemente, jamás logre monetizar ninguna de mis soluciones… pero, ¿quién sabe?">
+Capítulo 1: El problema Capítulo 2: La solución Red energética Arquitectura de red Despliegue del cluster de k8s Persistencia de la información Capítulo 3: La solución se transforma en un problema Capítulo 4: Conclusiones Capítulo 1: El problema Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar mis recursos estratégicamente o podría derrochar demasiados recursos. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones legales relacionadas con la titularidad y las condiciones de uso, es decir, con la propiedad intelectual. Compartir código abiertamente, sin establecer ninguna restricción, puede llegar a ser una mala idea. Soy consciente de que, muy probablemente, jamás logre monetizar ninguna de mis soluciones… pero, ¿quién sabe?">
   <meta property="og:locale" content="en_US">
   <meta property="og:type" content="article">
     <meta property="article:section" content="es">
@@ -100,39 +100,39 @@ Capítulo 1: El problema Capítulo 2: La solución Red energética Arquitectura 
     </header>
     <div class="post-content">
       <h1 id="introducción">Introducción</h1>
-<p>En este artículo voy a tratar de explciar cómo y porqué decidí crear un cloud privado sobre una infraestructura on-premise, usando ordenadores lo más baratos posibles.</p>
+<p>En este artículo voy a tratar de explicar cómo y por qué decidí crear un cloud privado sobre una infraestructura on-premise, usando los ordenadores más baratos posibles.</p>
 <p>Si también tienes en mente emplear un cloud privado on-premise, has de saber que tiene cierto grado de complejidad y se requieren ciertos conocimientos previos de red, Kubernetes y Linux.</p>
 <ul>
-<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-1-el-problema">Capítulo 1: El problema</a></li>
-<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-2-la-soluci%c3%b3n">Capítulo 2: La solución</a>
+<li><a href="/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-1-el-problema">Capítulo 1: El problema</a></li>
+<li><a href="/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-2-la-soluci%c3%b3n">Capítulo 2: La solución</a>
 <ul>
-<li><a href="/es/es/articulos/mi-cloud-on-premise/#red-energ%c3%a9tica">Red energética</a></li>
-<li><a href="/es/es/articulos/mi-cloud-on-premise/#arquitectura-de-red">Arquitectura de red</a></li>
-<li><a href="/es/es/articulos/mi-cloud-on-premise/#desplieuge-del-cluster-de-k8s">Despliegue del cluster de k8s</a></li>
-<li><a href="/es/es/articulos/mi-cloud-on-premise/#persistencia-de-la-informaci%c3%b3n">Persistencia de la información</a></li>
+<li><a href="/es/articulos/mi-cloud-on-premise/#red-energ%c3%a9tica">Red energética</a></li>
+<li><a href="/es/articulos/mi-cloud-on-premise/#arquitectura-de-red">Arquitectura de red</a></li>
+<li><a href="/es/articulos/mi-cloud-on-premise/#desplieuge-del-cluster-de-k8s">Despliegue del cluster de k8s</a></li>
+<li><a href="/es/articulos/mi-cloud-on-premise/#persistencia-de-la-informaci%c3%b3n">Persistencia de la información</a></li>
 </ul>
 </li>
-<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-3-la-soluci%c3%b3n-se-transforma-en-un-problema">Capítulo 3: La solución se transforma en un problema</a></li>
-<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-4-conclusiones">Capítulo 4: Colcusiones</a></li>
+<li><a href="/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-3-la-soluci%c3%b3n-se-transforma-en-un-problema">Capítulo 3: La solución se transforma en un problema</a></li>
+<li><a href="/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-4-conclusiones">Capítulo 4: Conclusiones</a></li>
 </ul>
 <h1 id="capítulo-1-el-problema">Capítulo 1: El problema</h1>
 <p>Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar
-mis recursos estratégicamente o acabaré convirtiéndome en un sintecho. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones
+mis recursos estratégicamente o podría derrochar demasiados recursos. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones
 legales relacionadas con la titularidad y las condiciones de uso, es decir, con la propiedad intelectual. Compartir código abiertamente, sin establecer ninguna restricción, puede llegar a ser una mala idea. Soy consciente de que, muy probablemente,
 jamás logre monetizar ninguna de mis soluciones&hellip; pero, ¿quién sabe?</p>
 <p>Por todo ello llegué a una conclusión: para evitar problemas, debía contar con mi propia infraestructura. La estrategia es simple: por un lado, evito tener que pagar por servicios en la nube o soluciones SaaS y, por otro, mantengo todos mis proyectos
 ocultos al ojo ajeno. Me incomoda pensar que los costes puedan descontrolarse por un simple error de configuración en una infraestructura de terceros. Además, me ahorro tener que crear una sociedad limitada solo para proteger legalmente lo que hago.
-Una SL conlleva demasiados quebraderos de cabeza a nivel burocrático en el país donde vivo, España.</p>
+Crear una sociedad limitada implica demasiados líos burocráticos.</p>
 <h1 id="capítulo-2-la-solución">Capítulo 2: La solución</h1>
-<p>Para crear algo mínimanete funcional primero es necesario establecer el paradigma sobre el que ir tomando las decisiones. En mi caso he establecido tres principios:</p>
+<p>Para crear algo funcional primero es necesario establecer el paradigma sobre el que ir tomando las decisiones. En mi caso he establecido tres principios:</p>
 <ul>
 <li>Las soluciones creadas se han de poder desplegar en otros entornos cloud, como podrían ser AWS, Azure, GCP o directamente sobre un cluster de Kubernetes.</li>
 <li>Se ha de probar la solución sobre un entorno distribuido y con alta disponiblididad (HA).</li>
-<li>Cada compontente que conforma el sistema had e ser lo más barato posible</li>
+<li>Cada compontente que conforma el sistema ha de ser lo más barato posible.</li>
 </ul>
-<p>La tecnología trabaja en base a capas de abstarcción, es responsabilidad de cada uno decidir a partir de que nivel  empezar a asumir responsabilidades o, por el contrario, cederlas a terceros. En este caso contreto decidí partir con máquinas físicas
+<p>La tecnología trabaja en base a capas de abstracción, es responsabilidad de cada uno decidir a partir de que nivel  empezar a asumir responsabilidades o, por el contrario, cederlas a terceros. En este caso concreto decidí partir con máquinas físicas
 sobre las que instalé Ubuntu para terminar desplegando un cluster de Kubernetes. Considerando que cada nodo requiere 2 cores y 2 Gb como mínimo para poder operar como nodo del cluster, compré seis máquinas. Tres de estas tiene el rol de Control Plane y
-las tres restantes el rol de Worker. En caso de necesitar más capacidad se pueden incrementer el número de nodos Worker, así que hay bastante flexibilidad.</p>
+las tres restantes el rol de Worker. En caso de necesitar más capacidad, se puede incrementar el número de nodos Worker.</p>
 <p>Lo que hice a continuacióin fue seleccionar los componentes de ordenador que mejor se ajustaban, es decir, los más baratos.</p>
 <table>
   <thead>
@@ -196,7 +196,7 @@ las tres restantes el rol de Worker. En caso de necesitar más capacidad se pued
       </tr>
   </tbody>
 </table>
-<p>Algunas métricas contables de lo que cuestan las piezas y poner a funcionar ciertas confioguraciones de cluster:</p>
+<p>Algunas métricas contables de lo que cuestan las piezas y poner a funcionar ciertas configuraciones de cluster:</p>
 <h4 id="componentes">Componentes</h4>
 <ul>
 <li>Ryzen 3 4100: <style>
@@ -382,10 +382,10 @@ las tres restantes el rol de Worker. En caso de necesitar más capacidad se pued
 
 <span class="math-operation"> 1704,39€ </span></strong></li>
 </ul>
-<p>Lo que tenemos hasta ahora no son nada más que máquinas, para que se transformen en parte de un cluster de Kubernetes  hay que controlar tres pilaes: la energia, la persistencia de los datos y la configuración de la red. Por supuesto, hay muchas otras
-cosas, como por ejemplo el sistema de alarmado, una estrategia de disaster recovery, la seguridad&hellip; No obstante, si nos ceñimos al objetivo de crear un cluster &ldquo;minimamente&rdquo; funcional, hay que manejar los tres aspectos anteriores.</p>
+<p>Lo que tenemos hasta ahora no son nada más que máquinas, para que se transformen en parte de un cluster de Kubernetes  hay que controlar tres pilares: la energía, la persistencia de los datos y la configuración de la red. Por supuesto, hay muchas otras
+cosas, como por ejemplo el sistema de alarmas, una estrategia de disaster recovery, la seguridad&hellip; No obstante, si nos ceñimos al objetivo de crear un cluster &ldquo;minimamente&rdquo; funcional, hay que manejar los tres aspectos anteriores.</p>
 <h3 id="red-energética">Red energética</h3>
-<p>Busqué los planos de la red elećtrica de mi casa para revisar la energía máxima que entrega cada línea. La idea es confirmar que, al conecatr tantos ordenadores, el diferencial no salte por superar la carga máxima. Por eso hay que calcular primero
+<p>Busqué los planos de la red eléctrica de mi casa para revisar la energía máxima que entrega cada línea. La idea es confirmar que, al conectar tantos ordenadores, el diferencial no salte por superar la carga máxima. Por eso hay que calcular primero
 cuantos dispositivos soporta cada línea con la siguiente fórmula:</p>
 <style>
     .math-block {
@@ -429,7 +429,7 @@ $$
     }
 </style>
 
-<span class="math-operation">2.29A</span>. Pero cada fuente de alimentación no va a demandar el 100% de energia posible ya que los componentes que vamos
+<span class="math-operation">2.29A</span>. Pero cada fuente de alimentación no va a demandar el 100% de energía posible ya que los componentes que vamos
 a conectar no llegan a dicho límite, por eso hay que ajustar por nodo el consumo máximo real (<a href="https://www.geeknetic.es/calculadora-fuente-alimentacion/">página utilizada</a> para obtener los watts de cada componente).</p>
 <table>
   <thead>
@@ -530,8 +530,8 @@ $$
 </script>
 <p>Gracias a todos estos cálculos pude confirmar que no se producirá ningún apagón en mi casa.</p>
 <h3 id="arquitectura-de-red">Arquitectura de red</h3>
-<p>Hay muchas maneras de diseñar la topología de una red. En esta caso decidí aislar el entorno donde se aloja el cluster de la red doméstica, para evitar interferencias. Para ello usé un router intermedio, creando asñí el conocido WAN-to-LAN: la subred
-192.168.1.0/24 se mantiene como red doméstica minetras que la subred 192.168.2.0/24 es donde se aloja el cluster. Para mantener una coherencia en la asignación de IP&rsquo;s asocié un rango de IP&rsquo;s con ciertos roles:</p>
+<p>Hay muchas maneras de diseñar la topología de una red. En este caso decidí aislar el entorno donde se aloja el cluster de la red doméstica, para evitar interferencias. Para ello usé un router intermedio, creando así el conocido WAN-to-LAN: la subred
+192.168.1.0/24 se mantiene como red doméstica mientras que la subred 192.168.2.0/24 es donde se aloja el cluster. Para mantener una coherencia en la asignación de IP&rsquo;s asocié un rango de IP&rsquo;s con ciertos roles:</p>
 <ul>
 <li><style>
     .math-operation {
@@ -633,10 +633,14 @@ $$
 </style>
 
 <div class="img-center">
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/network-topology-1.png"/>
+    
+    
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/network-topology-1.png">
 </div>
-<p>Para crear un cluster de Kubernetes en HA no basta tan solo con tener varios nodos worker, también se necesita contar con varios control plane, asociando estos ultimos a una IP virtual. El funcionamiento es simple, si un nodo de tipo control plane
-se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para hacer funcionar algo así combiné dos herramientas amplaimente usadas, HaProxy y KeepAlived.</p>
+<p>Para crear un cluster de Kubernetes en HA no basta tan solo con tener varios nodos worker, también se necesita contar con varios control plane, asociando estos últimos a una IP virtual. El funcionamiento es simple, si un nodo de tipo control plane
+se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para hacer funcionar algo así combiné dos herramientas ampliamente usadas, HaProxy y KeepAlived.</p>
 <p>Lo que ocurre por debajo es la siguiente secuencia:</p>
 <ol>
 <li>KeepAlived asigna el rol de líder a algún control plane disponible</li>
@@ -652,10 +656,14 @@ se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para 
 </style>
 
 <div class="img-center">
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_1.png"/>
+    
+    
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_1.png">
 </div>
 <ol start="2">
-<li>La IP virtual se asocia con el control plane líder del punto anterior. A partir de este momento nodo en custión es elñ encargado de comunicarse con los nodos worker.</li>
+<li>La IP virtual se asocia con el control plane líder del punto anterior. A partir de este momento, el nodo en custión es el encargado de comunicarse con los nodos worker.</li>
 </ol>
 <style>
     .img-center {
@@ -668,7 +676,11 @@ se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para 
 </style>
 
 <div class="img-center">
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_2.png"/>
+    
+    
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_2.png">
 </div>
 <ol start="3">
 <li>El control plane líder deja de dar servicio</li>
@@ -684,7 +696,11 @@ se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para 
 </style>
 
 <div class="img-center">
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_3.png"/>
+    
+    
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_3.png">
 </div>
 <ol start="4">
 <li>Los control plane que siguen funcionando empiezan a negociar quien será el nuevo líder. Una vez establecido, KeepAlived asociará la IP virtual al nuevo nodo líder.</li>
@@ -700,9 +716,13 @@ se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para 
 </style>
 
 <div class="img-center">
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_4.png"/>
+    
+    
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_4.png">
 </div>
-<p>Tanto HaProxy como KeepAlived se han de instalar en cada control plane. Los pasos para su instalación son los mismos, lo único que difire son los archivos de configuración:</p>
+<p>Tanto HaProxy como KeepAlived se han de instalar en cada control plane. Los pasos para su instalación son los mismos, lo único que difiere son los archivos de configuración:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apt -y update
 </span></span><span style="display:flex;"><span>apt -y install vim
 </span></span><span style="display:flex;"><span>apt -y install keepalived
@@ -793,8 +813,8 @@ se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para 
 </span></span><span style="display:flex;"><span>systemctl enable keepalived
 </span></span><span style="display:flex;"><span>systemctl start haproxy
 </span></span><span style="display:flex;"><span>systemctl start keepalived
-</span></span></code></pre></div><h3 id="desplieuge-del-cluster-de-k8s">Desplieuge del cluster de K8S</h3>
-<p>Para desplegar Kubernetes utilicé una herramienta llamada KubeKey. Ha sido desarrollada por la comunidad KubeSphere, se trata de un CLI que simplifica la isntalación conectandose por SSH a cada nodo.</p>
+</span></span></code></pre></div><h3 id="despliegue-del-cluster-de-k8s">Despliegue del cluster de K8S</h3>
+<p>Para desplegar Kubernetes utilicé una herramienta llamada KubeKey. Ha sido desarrollada por la comunidad KubeSphere, se trata de un CLI que simplifica la instalación conectándose por SSH a cada nodo.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -sfL https://get-kk.kubesphere.io | VERSION<span style="color:#f92672">={</span>versión<span style="color:#f92672">}</span> sh -
 </span></span></code></pre></div><p>Antes de realizar la instalación hay que configurar un Yaml con todas las IP de los nodos y sus respectivos roles.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">kubekey.kubesphere.io/v1alpha2</span>
@@ -854,7 +874,7 @@ se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para 
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">registryMirrors</span>: []
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">insecureRegistries</span>: []
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">addons</span>: []
-</span></span></code></pre></div><p>Para desplegar el clsuter tan solo hay que ejecutar este último comando:</p>
+</span></span></code></pre></div><p>Para desplegar el cluster tan solo hay que ejecutar este último comando:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>chmod +x kk
 </span></span><span style="display:flex;"><span>./kk create cluster -f <span style="color:#f92672">{</span>kube key cluster configuration<span style="color:#f92672">}</span>.yaml
 </span></span></code></pre></div><h3 id="persistencia-de-la-información">Persistencia de la información</h3>
@@ -896,7 +916,11 @@ mientras se clona la copia de datos que sigue estando sana. Por eso se ha añadi
 </style>
 
 <div class="img-center">
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/longhorn_1.png"/>
+    
+    
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/longhorn_1.png">
 </div>
 <ol start="4">
 <li>Definición del manifiesto del PVC</li>
@@ -939,8 +963,8 @@ mientras se clona la copia de datos que sigue estando sana. Por eso se ha añadi
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">volumeMode</span>: <span style="color:#ae81ff">Filesystem</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">volumeName</span>: <span style="color:#ae81ff">gitea-ha-pv-data</span>
 </span></span></code></pre></div><h3 id="exposición-de-servicios">Exposición de servicios</h3>
-<p>Hasta ahora tenemos montado un clúster de Kubernetes con alta disponibilidad, interesante, ¿Verdad? Sin embargo, sin exponer los servicios al exterior, solo es un monton de máquinas sin mucha utilidad.</p>
-<p>Existen dos formas pde hacer accesibles los servicios fuera del clúster: mediante NodePort o LoadBalancer. Usar NodePort no tiene mucho sentido en un entorno HA, ya que el servicio queda vinculado a un único nodo, lo que introduce un posible punto
+<p>Hasta ahora tenemos montado un clúster de Kubernetes con alta disponibilidad. Sin embargo, sin exponer los servicios al exterior, solo es un montón de máquinas sin mucha utilidad.</p>
+<p>Existen dos formas hacer accesibles los servicios fuera del clúster: mediante NodePort o LoadBalancer. Usar NodePort no tiene mucho sentido en un entorno HA, ya que el servicio queda vinculado a un único nodo, lo que introduce un posible punto
 único de fallo. Una alternativa sería montar un balanceador de carga con HAProxy y KeepAlived, usando un nuevo grupo de máquinas. Aunque esto funcionaría, también implica un mayor coste, ya que necesitarías al menos dos nuevos ordenadores. Una opción
 más barata consiste en utilizar directamente los propios nodos worker como balanceadores de carga, aprovechando OpenELB.</p>
 <p>Al igual que antes, hay muchas herramientas disponibles. En mi caso, he seleccionado <a href="https://openelb.io/docs/concepts/layer-2-mode/">OpenELB en modo Layer 2</a> para asignar una IP libre de mi subred 192.168.2.0/24 al Ingress. A grandes rasgos, así es
@@ -996,7 +1020,11 @@ cómo funciona:</p>
 </style>
 
 <div class="img-center">
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/openelb_1.png"/>
+    
+    
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/openelb_1.png">
 </div>
 <p>El último paso para tener una solución sólida consiste en asegurar el acceso al Ingress mediante una autoridad certificadora (CA). Se puede hacer con cert-manager, un servicio integrado en Kubernetes que gestiona automáticamente los certificados.
 Primero se tiene que crear una clave con la que firmar los certificados usando la CA.</p>
@@ -1057,11 +1085,11 @@ un clúster de Kubernetes no es nada sencillo, especialmente cuando se ejecuta s
 de mis malas decisiones.</p>
 <p>En un momento dado, los nodos worker empezaron a reiniciarse aleatoriamente con un error de segmentación de memoria del kernel. Pasé mucho tiempo intentando averiguar la causa del problema. Tras varias semanas sin encontrar el origen, tiré la toalla.
 Decidí copiar los datos de los volúmenes persistentes a mi ordenador personal y reinstalar todo el clúster desde cero. Pero&hellip; el error seguía apareciendo. Entonces empecé a repasar todos los cambios que había hecho recientemente, y me di cuenta del
-verdadero problema: una ranura de RAM que había añadido no hacía mucho. Estaba funcionando a una frecuencia distinta al resto. Sí, me pasé horas investigand&hellip; y la solución era tan simple como reapsar todas las modificaciones que habia realizado.</p>
+verdadero problema: una ranura de RAM que había añadido no hacía mucho. Estaba funcionando a una frecuencia distinta al resto. Sí, me pasé horas investigando&hellip; y la solución era tan simple como repasar todas las modificaciones que había realizado.</p>
 <p>Otro problema fue usar una conexión Molex a SATA. Al principio, antes de utilizar Longhorn, todos los datos se almacenaban en un host independiente que actuaba como almacenamiento de Kubernetes, usando NFS. La placa base de ese host solo tenía
-seis puertos SATA, así que utilicé un adaptador Molex a SATA para aumentar la capaacidad de los discos y poder montar así un RAID. Con el tiempo, uno de los discos falló. Estoy bastante seguro de que fue por la alimentación inestable que proporcionaba
+seis puertos SATA, así que utilicé un adaptador Molex a SATA para aumentar la capacidad de los discos y poder montar así un RAID. Con el tiempo, uno de los discos falló. Estoy bastante seguro de que fue por la alimentación inestable que proporcionaba
 la conexión Molex. En su momento parecía una solución rápida y efectiva, no obstante, acabó comprometiendo la estabilidad de toda la infraestructura y de los datos.</p>
-<h1 id="chapter-4-conclusions">Chapter 4: Conclusions</h1>
+<h1 id="capítulo-4-conclusiones">Capítulo 4: Conclusiones</h1>
 <p>Como ingeniero, debes evaluar con cuidado si montar un clúster de Kubernetes on-premise realmente es la mejor opción. La lista de problemas que pueden surgir es interminable, enfrentarte a ellos consume muchísimo tiempo y energía. Aun así, si decides
 construir uno, el conocimiento que obtendrás será muy valioso. Las lecciones que se aprenden al enfrentarse al reto de gestionar tu propio clúster son insustituibles y sin duda influirán positivamente en tu forma de tomar decisiones en futuros
 proyectos.</p>

@@ -92,3 +92,5 @@ defaultContentLanguageInSubdir = true
   description = " "
   author = "Marti March"
   avatar = "user-photo.jpeg"
+  environment = "github"
+# environment = "local"

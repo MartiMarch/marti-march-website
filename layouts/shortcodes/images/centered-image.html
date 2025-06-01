@@ -9,5 +9,9 @@
 </style>
 
 <div class="img-center">
-    <img src="{{ .Get "src" }}"/>
+    {{ $src := .Get "src" }}
+    {{ if eq .Site.Params.environment "github" }}
+        {{ $src = printf "/marti-march-website/%s" (strings.TrimPrefix "/" $src) }}
+    {{ end }}
+    <img src="{{ $src }}">
 </div>

@@ -23,11 +23,11 @@ If you have in mind doing something like this, hosting your own infrastructure a
 
 # Chapter 1: The problem
 
-I enjoy creating new solutions and trying to make money. But I'm just one person, not a company. That means I need to optimize my spending, otherwise, I could end up wasting a lot of time and money. Trying to build something can get very expensive, and in 
+I enjoy creating new solutions and trying to make money. But I'm just one person, not a company. That means I need to optimize my spending, otherwise, I could end up homeless. Trying to build something can get very expensive, and in 
 the IT world, it can become massively expensive. So, here's my first problem: money (yeah, the usual one). The second problem is about intellectual property. When someone is working on a new solution, sharing it publicly without considering
-the legal side can be risky—especially if there’s any hope of future profit. I know, I know... I'm aware I probably won't make a dime, but, who knows?
+the legal side can be risky—especially if there’s any hope of future profit. I know, I know... I'm aware I probably won't make a dime, who knows?
 
-I came to the conclusion that, to avoid both problems, the infrastructure must be hosted on-premise. With this approach, I can skip the need of pay for an expensive cloud or any type of SaaS, keeping my projects hidden. On one hand, I don't need to
+I came to the conclusion that, in order to avoid both problems, the infrastructure must be hosted on-premises. With this approach, I can skip the need of pay for an expensive cloud or any type of SaaS, keeping my projects hidden. On one hand, I don't need to
 deal with a "dynamic" budget that could surprise me with nasty expenses. On the other one, I don't need to create a company. And that last point is key. I live in Spain, which means starting a company is expensive and involves fight with a lot of
 bureaucratic headaches.
 
@@ -44,7 +44,7 @@ Technology operates with layers of abstraction, and one must decide which respon
 and building up to a Kubernetes cluster. Considering that a Kubernetes node requires at least 2 cores and 2 GB, I bought six machines. Three of them serve as control plane nodes and the other three as worker nodes. One of the benefits of using
 Kubernetes is that the number and capacity of each node can vary on demand.
 
-With this in mind, I chose the most coherent computer components (the cheapest ones):
+With this in mind, I chose the most suitable computer components — in this case, the cheapest ones:
 
 | Role     | CPU          | RAM   | Motherboard           | PSU   | Disk               |
 |----------|--------------|-------|-----------------------|-------|--------------------|
@@ -280,7 +280,7 @@ To deploy the Kubernetes cluster, I used [KubeKey](https://www.kubesphere.io/doc
 curl -sfL https://get-kk.kubesphere.io | VERSION={versión} sh -
 ```
 
-To configure the cluster configuration it requires a yaml definition with all IP nodes and his respective roles.
+To configure the cluster, a YAML definition is required, including all node IPs and their respective roles.
 
 ```yaml
 apiVersion: kubekey.kubesphere.io/v1alpha2
@@ -351,8 +351,8 @@ chmod +x kk
 
 ### Persistence of data
 
-Persistence of data is a challenging aspect in distributed systems. I have tested many solutions, and the one I chose is to keep the data replicated. In this approach, data is treated like a pod: you configure a desired number of replicas and the 
-system ensures it stays replicated across worker nodes disks. If one node goes down, a persistent volume will reattach the data from another available node while the healthy data is cloned. That is why an extra 1TB SSD has been added to each 
+Persistence of data is a challenging aspect in distributed systems. I have tested many solutions, and the one I chose is to keep the data replicated. In this approach, data is treated like a pod: you configure a desired number of replicas, and the 
+system ensures it remains replicated across the disks of worker nodes. If one node goes down, a persistent volume will reattach the data from another available node while the healthy data is cloned. That is why an extra 1TB SSD has been added to each 
 worker node. All of this is achieved using Longhorn, steps to install it:
 
 1. Disable multipath on each worker node

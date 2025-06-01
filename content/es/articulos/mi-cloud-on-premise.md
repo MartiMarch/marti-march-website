@@ -7,7 +7,7 @@ lang = "es"
 
 # Introducción
 
-En este artículo voy a tratar de explciar cómo y porqué decidí crear un cloud privado sobre una infraestructura on-premise, usando ordenadores lo más baratos posibles.
+En este artículo voy a tratar de explicar cómo y por qué decidí crear un cloud privado sobre una infraestructura on-premise, usando los ordenadores más baratos posibles.
 
 Si también tienes en mente emplear un cloud privado on-premise, has de saber que tiene cierto grado de complejidad y se requieren ciertos conocimientos previos de red, Kubernetes y Linux.
 
@@ -18,29 +18,29 @@ Si también tienes en mente emplear un cloud privado on-premise, has de saber qu
   - [Despliegue del cluster de k8s](#desplieuge-del-cluster-de-k8s)
   - [Persistencia de la información](#persistencia-de-la-información)
 - [Capítulo 3: La solución se transforma en un problema](#capítulo-3-la-solución-se-transforma-en-un-problema)
-- [Capítulo 4: Colcusiones](#capítulo-4-conclusiones)
+- [Capítulo 4: Conclusiones](#capítulo-4-conclusiones)
 
 # Capítulo 1: El problema
 
 Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar
-mis recursos estratégicamente o podría llegar a derrochar mucho tiempo y dinero. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones
+mis recursos estratégicamente o podría derrochar demasiados recursos. Además, si ya de por sí un proyecto puede encarecerse, en el mundo tecnológico los costes pueden dispararse sin control. También es importante ser precavido con ciertas cuestiones
 legales relacionadas con la titularidad y las condiciones de uso, es decir, con la propiedad intelectual. Compartir código abiertamente, sin establecer ninguna restricción, puede llegar a ser una mala idea. Soy consciente de que, muy probablemente, 
 jamás logre monetizar ninguna de mis soluciones... pero, ¿quién sabe?
 
 Por todo ello llegué a una conclusión: para evitar problemas, debía contar con mi propia infraestructura. La estrategia es simple: por un lado, evito tener que pagar por servicios en la nube o soluciones SaaS y, por otro, mantengo todos mis proyectos
 ocultos al ojo ajeno. Me incomoda pensar que los costes puedan descontrolarse por un simple error de configuración en una infraestructura de terceros. Además, me ahorro tener que crear una sociedad limitada solo para proteger legalmente lo que hago. 
-Una SL conlleva demasiados quebraderos de cabeza a nivel burocrático en el país donde vivo, España.
+Crear una sociedad limitada implica demasiados líos burocráticos.
 
 # Capítulo 2: La solución
 
-Para crear algo mínimanete funcional primero es necesario establecer el paradigma sobre el que ir tomando las decisiones. En mi caso he establecido tres principios:
+Para crear algo funcional primero es necesario establecer el paradigma sobre el que ir tomando las decisiones. En mi caso he establecido tres principios:
 - Las soluciones creadas se han de poder desplegar en otros entornos cloud, como podrían ser AWS, Azure, GCP o directamente sobre un cluster de Kubernetes.
 - Se ha de probar la solución sobre un entorno distribuido y con alta disponiblididad (HA).
-- Cada compontente que conforma el sistema had e ser lo más barato posible
+- Cada compontente que conforma el sistema ha de ser lo más barato posible.
 
-La tecnología trabaja en base a capas de abstarcción, es responsabilidad de cada uno decidir a partir de que nivel  empezar a asumir responsabilidades o, por el contrario, cederlas a terceros. En este caso contreto decidí partir con máquinas físicas
+La tecnología trabaja en base a capas de abstracción, es responsabilidad de cada uno decidir a partir de que nivel  empezar a asumir responsabilidades o, por el contrario, cederlas a terceros. En este caso concreto decidí partir con máquinas físicas
 sobre las que instalé Ubuntu para terminar desplegando un cluster de Kubernetes. Considerando que cada nodo requiere 2 cores y 2 Gb como mínimo para poder operar como nodo del cluster, compré seis máquinas. Tres de estas tiene el rol de Control Plane y
-las tres restantes el rol de Worker. En caso de necesitar más capacidad se pueden incrementer el número de nodos Worker, así que hay bastante flexibilidad.
+las tres restantes el rol de Worker. En caso de necesitar más capacidad, se puede incrementar el número de nodos Worker.
 
 Lo que hice a continuacióin fue seleccionar los componentes de ordenador que mejor se ajustaban, es decir, los más baratos.
 
@@ -53,7 +53,7 @@ Lo que hice a continuacióin fue seleccionar los componentes de ordenador que me
 | worker 2 | Ryzen 5 4500 | 24 GB | ASRock A320M-DVS R4.0 | 550 W | 450GB SSD, 1TB SSD |
 | worker 3 | Ryzen 5 4500 | 24 GB | ASRock A320M-DVS R4.0 | 550 W | 450GB SSD, 1TB SSD |
 
-Algunas métricas contables de lo que cuestan las piezas y poner a funcionar ciertas confioguraciones de cluster:
+Algunas métricas contables de lo que cuestan las piezas y poner a funcionar ciertas configuraciones de cluster:
 
 #### Componentes
 - Ryzen 3 4100: {{< mathematics/inline >}}~51,80€{{< /mathematics/inline >}}
@@ -77,12 +77,12 @@ Algunas métricas contables de lo que cuestan las piezas y poner a funcionar cie
 - Minimal HA cluster (2 control planes and 2 worker nodes): {{< mathematics/inline >}} 1136,26€ {{< /mathematics/inline >}}
 - **Current HA cluster (3 control planes and 3 worker nodes): {{< mathematics/inline >}} 1704,39€ {{< /mathematics/inline >}}**
 
-Lo que tenemos hasta ahora no son nada más que máquinas, para que se transformen en parte de un cluster de Kubernetes  hay que controlar tres pilaes: la energia, la persistencia de los datos y la configuración de la red. Por supuesto, hay muchas otras
-cosas, como por ejemplo el sistema de alarmado, una estrategia de disaster recovery, la seguridad... No obstante, si nos ceñimos al objetivo de crear un cluster "minimamente" funcional, hay que manejar los tres aspectos anteriores.
+Lo que tenemos hasta ahora no son nada más que máquinas, para que se transformen en parte de un cluster de Kubernetes  hay que controlar tres pilares: la energía, la persistencia de los datos y la configuración de la red. Por supuesto, hay muchas otras
+cosas, como por ejemplo el sistema de alarmas, una estrategia de disaster recovery, la seguridad... No obstante, si nos ceñimos al objetivo de crear un cluster "minimamente" funcional, hay que manejar los tres aspectos anteriores.
 
 ### Red energética
 
-Busqué los planos de la red elećtrica de mi casa para revisar la energía máxima que entrega cada línea. La idea es confirmar que, al conecatr tantos ordenadores, el diferencial no salte por superar la carga máxima. Por eso hay que calcular primero
+Busqué los planos de la red eléctrica de mi casa para revisar la energía máxima que entrega cada línea. La idea es confirmar que, al conectar tantos ordenadores, el diferencial no salte por superar la carga máxima. Por eso hay que calcular primero
 cuantos dispositivos soporta cada línea con la siguiente fórmula:
 
 {{< mathematics/block >}}
@@ -93,7 +93,7 @@ A_{\text{max psu}} = \frac{550W}{240V} = 2.29A
 $$
 {{< /mathematics/block >}}
 
-Un nodo funcionando a máxima potencia (consumo de Watts), supone en total unos {{< mathematics/inline >}}2.29A{{< /mathematics/inline >}}. Pero cada fuente de alimentación no va a demandar el 100% de energia posible ya que los componentes que vamos
+Un nodo funcionando a máxima potencia (consumo de Watts), supone en total unos {{< mathematics/inline >}}2.29A{{< /mathematics/inline >}}. Pero cada fuente de alimentación no va a demandar el 100% de energía posible ya que los componentes que vamos
 a conectar no llegan a dicho límite, por eso hay que ajustar por nodo el consumo máximo real ([página utilizada](https://www.geeknetic.es/calculadora-fuente-alimentacion/) para obtener los watts de cada componente).
 
 | Rol      | Watts máximos | Amperios máximos | Line de energía |
@@ -125,8 +125,8 @@ Gracias a todos estos cálculos pude confirmar que no se producirá ningún apag
 
 ### Arquitectura de red
 
-Hay muchas maneras de diseñar la topología de una red. En esta caso decidí aislar el entorno donde se aloja el cluster de la red doméstica, para evitar interferencias. Para ello usé un router intermedio, creando asñí el conocido WAN-to-LAN: la subred
-192.168.1.0/24 se mantiene como red doméstica minetras que la subred 192.168.2.0/24 es donde se aloja el cluster. Para mantener una coherencia en la asignación de IP's asocié un rango de IP's con ciertos roles:
+Hay muchas maneras de diseñar la topología de una red. En este caso decidí aislar el entorno donde se aloja el cluster de la red doméstica, para evitar interferencias. Para ello usé un router intermedio, creando así el conocido WAN-to-LAN: la subred
+192.168.1.0/24 se mantiene como red doméstica mientras que la subred 192.168.2.0/24 es donde se aloja el cluster. Para mantener una coherencia en la asignación de IP's asocié un rango de IP's con ciertos roles:
 
 - {{< mathematics/inline >}}192.168.2.0{{< /mathematics/inline >}}: Unassigned by now (_it would be another router to enable HA_)
 - {{< mathematics/inline >}}192.168.2.1{{< /mathematics/inline >}}: IP router
@@ -139,8 +139,8 @@ Hay muchas maneras de diseñar la topología de una red. En esta caso decidí ai
 
 {{< images/centered-image src="/posts/how-my-on-premise-private-cloud-was-built/network-topology-1.png" >}}
 
-Para crear un cluster de Kubernetes en HA no basta tan solo con tener varios nodos worker, también se necesita contar con varios control plane, asociando estos ultimos a una IP virtual. El funcionamiento es simple, si un nodo de tipo control plane
-se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para hacer funcionar algo así combiné dos herramientas amplaimente usadas, HaProxy y KeepAlived.
+Para crear un cluster de Kubernetes en HA no basta tan solo con tener varios nodos worker, también se necesita contar con varios control plane, asociando estos últimos a una IP virtual. El funcionamiento es simple, si un nodo de tipo control plane
+se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para hacer funcionar algo así combiné dos herramientas ampliamente usadas, HaProxy y KeepAlived.
 
 Lo que ocurre por debajo es la siguiente secuencia:
 
@@ -148,7 +148,7 @@ Lo que ocurre por debajo es la siguiente secuencia:
 
 {{< images/centered-image src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_1.png" >}}
 
-2. La IP virtual se asocia con el control plane líder del punto anterior. A partir de este momento nodo en custión es elñ encargado de comunicarse con los nodos worker.
+2. La IP virtual se asocia con el control plane líder del punto anterior. A partir de este momento, el nodo en custión es el encargado de comunicarse con los nodos worker.
 
 {{< images/centered-image src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_2.png" >}}
 
@@ -160,7 +160,7 @@ Lo que ocurre por debajo es la siguiente secuencia:
 
 {{< images/centered-image src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_4.png" >}}
 
-Tanto HaProxy como KeepAlived se han de instalar en cada control plane. Los pasos para su instalación son los mismos, lo único que difire son los archivos de configuración:
+Tanto HaProxy como KeepAlived se han de instalar en cada control plane. Los pasos para su instalación son los mismos, lo único que difiere son los archivos de configuración:
 
 ```bash
 apt -y update
@@ -267,9 +267,9 @@ systemctl start haproxy
 systemctl start keepalived
 ````
 
-### Desplieuge del cluster de K8S
+### Despliegue del cluster de K8S
 
-Para desplegar Kubernetes utilicé una herramienta llamada KubeKey. Ha sido desarrollada por la comunidad KubeSphere, se trata de un CLI que simplifica la isntalación conectandose por SSH a cada nodo.
+Para desplegar Kubernetes utilicé una herramienta llamada KubeKey. Ha sido desarrollada por la comunidad KubeSphere, se trata de un CLI que simplifica la instalación conectándose por SSH a cada nodo.
 
 ```bash
 curl -sfL https://get-kk.kubesphere.io | VERSION={versión} sh -
@@ -337,7 +337,7 @@ spec:
   addons: []
 ```
 
-Para desplegar el clsuter tan solo hay que ejecutar este último comando:
+Para desplegar el cluster tan solo hay que ejecutar este último comando:
 
 ```bash
 chmod +x kk
@@ -434,9 +434,9 @@ spec:
 
 ### Exposición de servicios
 
-Hasta ahora tenemos montado un clúster de Kubernetes con alta disponibilidad, interesante, ¿Verdad? Sin embargo, sin exponer los servicios al exterior, solo es un monton de máquinas sin mucha utilidad.
+Hasta ahora tenemos montado un clúster de Kubernetes con alta disponibilidad. Sin embargo, sin exponer los servicios al exterior, solo es un montón de máquinas sin mucha utilidad.
 
-Existen dos formas pde hacer accesibles los servicios fuera del clúster: mediante NodePort o LoadBalancer. Usar NodePort no tiene mucho sentido en un entorno HA, ya que el servicio queda vinculado a un único nodo, lo que introduce un posible punto
+Existen dos formas hacer accesibles los servicios fuera del clúster: mediante NodePort o LoadBalancer. Usar NodePort no tiene mucho sentido en un entorno HA, ya que el servicio queda vinculado a un único nodo, lo que introduce un posible punto
 único de fallo. Una alternativa sería montar un balanceador de carga con HAProxy y KeepAlived, usando un nuevo grupo de máquinas. Aunque esto funcionaría, también implica un mayor coste, ya que necesitarías al menos dos nuevos ordenadores. Una opción
 más barata consiste en utilizar directamente los propios nodos worker como balanceadores de carga, aprovechando OpenELB.
 
@@ -572,14 +572,14 @@ de mis malas decisiones.
 
 En un momento dado, los nodos worker empezaron a reiniciarse aleatoriamente con un error de segmentación de memoria del kernel. Pasé mucho tiempo intentando averiguar la causa del problema. Tras varias semanas sin encontrar el origen, tiré la toalla.
 Decidí copiar los datos de los volúmenes persistentes a mi ordenador personal y reinstalar todo el clúster desde cero. Pero... el error seguía apareciendo. Entonces empecé a repasar todos los cambios que había hecho recientemente, y me di cuenta del
-verdadero problema: una ranura de RAM que había añadido no hacía mucho. Estaba funcionando a una frecuencia distinta al resto. Sí, me pasé horas investigand... y la solución era tan simple como reapsar todas las modificaciones que habia realizado.
+verdadero problema: una ranura de RAM que había añadido no hacía mucho. Estaba funcionando a una frecuencia distinta al resto. Sí, me pasé horas investigando... y la solución era tan simple como repasar todas las modificaciones que había realizado.
 
 Otro problema fue usar una conexión Molex a SATA. Al principio, antes de utilizar Longhorn, todos los datos se almacenaban en un host independiente que actuaba como almacenamiento de Kubernetes, usando NFS. La placa base de ese host solo tenía
-seis puertos SATA, así que utilicé un adaptador Molex a SATA para aumentar la capaacidad de los discos y poder montar así un RAID. Con el tiempo, uno de los discos falló. Estoy bastante seguro de que fue por la alimentación inestable que proporcionaba 
+seis puertos SATA, así que utilicé un adaptador Molex a SATA para aumentar la capacidad de los discos y poder montar así un RAID. Con el tiempo, uno de los discos falló. Estoy bastante seguro de que fue por la alimentación inestable que proporcionaba 
 la conexión Molex. En su momento parecía una solución rápida y efectiva, no obstante, acabó comprometiendo la estabilidad de toda la infraestructura y de los datos.
 
 
-# Chapter 4: Conclusions
+# Capítulo 4: Conclusiones
 
 Como ingeniero, debes evaluar con cuidado si montar un clúster de Kubernetes on-premise realmente es la mejor opción. La lista de problemas que pueden surgir es interminable, enfrentarte a ellos consume muchísimo tiempo y energía. Aun así, si decides
 construir uno, el conocimiento que obtendrás será muy valioso. Las lecciones que se aprenden al enfrentarse al reto de gestionar tu propio clúster son insustituibles y sin duda influirán positivamente en tu forma de tomar decisiones en futuros 

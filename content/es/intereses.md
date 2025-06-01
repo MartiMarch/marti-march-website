@@ -5,7 +5,7 @@ lang = 'es'
 +++
 
 Mi experiencia profesional comenzó con una pregunta muy simple: ¿cómo es posible mantener un ordenador en funcionamiento sin interrupciones? Esa curiosidad inicial me llevó al mundo de DevOps, donde aprendí los fundamentos del ciclo de vida del
-software y de la infraestructura. Con el tiempo, mi rol fue evolucionando, he trabajado admeás como Site Reliability Engineer (SRE) y Platform Engineer.
+software y de la infraestructura. Con el tiempo, mi rol fue evolucionando, he trabajado además como Site Reliability Engineer (SRE) y Platform Engineer.
 
 También me gusta programar, así que suelo resolver los problemas combinando principios de infraestructura y CI/CD con desarrollo backend. Actualmente estoy aprendiendo sobre Kubernetes Operators, arquitecturas orientadas a eventos y sistemas 
 distribuidos, con el objetivo de mejorar mis habilidades y poder construir soluciones flexibles a gran escala.
