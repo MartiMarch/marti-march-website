@@ -54,14 +54,14 @@ defaultContentLanguageInSubdir = true
   [[menu.main]]
     identifier = "articulos"
     name = "Últimos artículos"
-    url = "/marti-march-website/es/articulos/"
+    url = "/es/articulos/"
     weight = 2
     [menu.main.params]
       language = "es"
   [[menu.main]]
     identifier = "intereses"
     name = "Intereses"
-    url = "/marti-march-website/es/intereses"
+    url = "/es/intereses"
     weight = 3
     [menu.main.params]
       language = "es"
