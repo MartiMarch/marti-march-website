@@ -51,6 +51,7 @@ automatizar tareas repetitivas que no añaden valor real y consumen muchos recur
 
 - Ferrovial · {{< mathematics/soft-inline >}}01/09/2020–01/12/2021{{< /mathematics/soft-inline >}}  
   Mantuve un conjunto de clústeres Kubernetes con alta disponibilidad alojados en IBM Cloud. Desarrollé pipelines de CI/CD para microservicios de Spring Cloud Data Flow. Migré del cloud de IBM al cloud de Azure.  
+  {{< tags/tag "DevOps" >}} {{< tags/tag "SRE" >}} {{< tags/tag "Cloud Engineer" >}} {{< tags/tech-tag "IBM Cloud" >}} {{< tags/tech-tag "Redis" >}}  {{< tags/tech-tag "RabbitMQ" >}}  {{< tags/tech-tag "Spring Cloud Data Flow" >}} {{< tags/tech-tag "Kubernetes" >}} {{< tags/tech-tag "Grafana" >}}
   {{< tags/tech-tag "Prometheus" >}} {{< tags/tech-tag "Flux 2.0" >}} {{< tags/tech-tag "Azure" >}} {{< tags/tech-tag "Azure Devops" >}}  
 
 <!-- -->
