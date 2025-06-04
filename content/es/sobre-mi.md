@@ -26,7 +26,7 @@ automatizar tareas repetitivas que no añaden valor real y consumen muchos recur
 - Pipelines para el CI/CD de aplicaciones nativas del cloud · {{< mathematics/soft-inline >}}14/06/2023-05/02/2025{{< /mathematics/soft-inline >}}  
   Desarrollé pipelines a gran escala para gestionar el ciclo de vida de microservicios basados en la nube, con aproximadamente 15,000 despliegues semanales, dando servicio a 2,000 desarrolladores. Para ello colaboré con distintos equipos de TI,
   agregando funcionalidades a los procesos de validación de las promociones entre entornos.  
-  {{< tags/tag "DevOps" >}} {{< tags/tech-tag "Cloudbess" >}} {{< tags/tech-tag "Kubernetes" >}} {{< tags/tech-tag "Spinnaker" >}} {{< tags/tech-tag "groovy" >}} {{< tags/tech-tag "artifactory" >}} {{< tags/tech-tag "GCP" >}} {{< tags/tech-tag "GitLab" >}}
+  {{< tags/tag "DevOps" >}} {{< tags/tech-tag "Cloudbess" >}} {{< tags/tech-tag "Kubernetes" >}} {{< tags/tech-tag "Spinnaker" >}} {{< tags/tech-tag "groovy" >}} {{< tags/tech-tag "artifactory" >}} {{< tags/tech-tag "Helm" >}} {{< tags/tech-tag "GCP" >}} {{< tags/tech-tag "GitLab" >}}
 
 #### [Disid](https://www.disid.com/) · {{< mathematics/soft-inline >}}06/07/2022–06/06/2023{{< /mathematics/soft-inline >}}
 

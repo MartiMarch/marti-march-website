@@ -27,7 +27,7 @@ smoothly.
 - CI/CD pipelines for Mercadona cloud native applications · {{< mathematics/soft-inline >}}14/06/2023-05/02/2025{{< /mathematics/soft-inline >}}  
   I built and operated large-scale CI/CD pipelines to support cloud microservices lifecycle, enabling {{< mathematics/soft-inline >}}~15,000{{< /mathematics/soft-inline >}} weekly deployments across {{< mathematics/soft-inline >}}~2,000{{< /mathematics/soft-inline >}} developers.
   Collaborate across IT teams to improve production release validations process.  
-  {{< tags/tag "DevOps" >}} {{< tags/tech-tag "Cloudbess" >}} {{< tags/tech-tag "Kubernetes" >}} {{< tags/tech-tag "Spinnaker" >}} {{< tags/tech-tag "groovy" >}} {{< tags/tech-tag "artifactory" >}} {{< tags/tech-tag "GCP" >}} {{< tags/tech-tag "GitLab" >}}  
+  {{< tags/tag "DevOps" >}} {{< tags/tech-tag "Cloudbess" >}} {{< tags/tech-tag "Kubernetes" >}} {{< tags/tech-tag "Spinnaker" >}} {{< tags/tech-tag "groovy" >}} {{< tags/tech-tag "artifactory" >}} {{< tags/tech-tag "Helm" >}} {{< tags/tech-tag "GCP" >}} {{< tags/tech-tag "GitLab" >}}  
 
 #### [Disid](https://www.disid.com/) · {{< mathematics/soft-inline >}}06/07/2022–06/06/2023{{< /mathematics/soft-inline >}}
 
