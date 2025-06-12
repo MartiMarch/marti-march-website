@@ -82,4 +82,4 @@ automatizar tareas repetitivas que no añaden valor real y consumen muchos recur
 
 ### Estudios
 
-- 📚 Grado en Ingeniería Informática · [Universistat de Valencia, ETSE](https://www.uv.es/) · {{< mathematics/soft-inline >}}2018-2021{{< /mathematics/soft-inline >}}
+- 📚 Grado en Ingeniería Informática · [Universistat de Valencia, ETSE](https://www.uv.es/) · {{< mathematics/soft-inline >}}2017-2021{{< /mathematics/soft-inline >}}

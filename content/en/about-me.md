@@ -84,4 +84,4 @@ smoothly.
 
 ### Education
 
-- 📚 Computer Engineering degree · [Universistat de Valencia, ETSE](https://www.uv.es/) · {{< mathematics/soft-inline >}}2018-2021{{< /mathematics/soft-inline >}}
+- 📚 Computer Engineering degree · [Universistat de Valencia, ETSE](https://www.uv.es/) · {{< mathematics/soft-inline >}}2017-2021{{< /mathematics/soft-inline >}}
