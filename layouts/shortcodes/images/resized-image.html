@@ -4,7 +4,7 @@
 {{ $height := .Get "height" }}
 
 {{ if eq .Site.Params.environment "production" }}
-{{ $src = printf "/marti-march-website/%s" (strings.TrimPrefix "/" $src) }}
+    {{ $src = printf "/marti-march-website/%s" (strings.TrimPrefix "/" $src) }}
 {{ end }}
 
 <img src="{{ $src | safeURL }}" alt="{{ $alt }}"{{ with $width }} width="{{ . }}"{{ end }}{{ with $height }} height="{{ . }}"{{ end }}>

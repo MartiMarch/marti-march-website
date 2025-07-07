@@ -6,20 +6,55 @@
     <description>Recent content in Tags on Marti March</description>
     <generator>Hugo</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 06 May 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Jun 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/es/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Aws</title>
+      <link>//localhost:1313/es/tags/aws/</link>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/aws/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Cloud</title>
       <link>//localhost:1313/es/tags/cloud/</link>
-      <pubDate>Tue, 06 May 2025 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/es/tags/cloud/</guid>
       <description></description>
     </item>
     <item>
       <title>Devops</title>
       <link>//localhost:1313/es/tags/devops/</link>
-      <pubDate>Tue, 06 May 2025 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/es/tags/devops/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Fastapi</title>
+      <link>//localhost:1313/es/tags/fastapi/</link>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/fastapi/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Localstack</title>
+      <link>//localhost:1313/es/tags/localstack/</link>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/localstack/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Python</title>
+      <link>//localhost:1313/es/tags/python/</link>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/python/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Terraform</title>
+      <link>//localhost:1313/es/tags/terraform/</link>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/terraform/</guid>
       <description></description>
     </item>
     <item>
