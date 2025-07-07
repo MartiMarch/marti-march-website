@@ -1101,4 +1101,4 @@ def send_email_via_ses():
     )
 ```
 
-Con todo esto, ya estaría implementada la lista de servicios que tenía planificados. Tal vez en el futuro expando el proyecto agregando una pipeline para el CI y un chart de Helm con ArgoCD, de momento lo ejo aquí.
+Con todo esto, ya estaría implementada la lista de servicios que tenía planificados. Tal vez en el futuro expando el proyecto agregando una pipeline para el CI y un chart de Helm con ArgoCD, de momento lo dejo aquí.
