@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="es">
   <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
-    <title>Aprendiendo AWS con localstack // Marti March</title>
+    <title>Aprendiendo AWS con LocalStack // Marti March</title>
     <link rel="shortcut icon" href="/favicon.ico" />
     <meta charset="utf-8" />
-    <meta name="generator" content="Hugo 0.147.9">
+    <meta name="generator" content="Hugo 0.148.2">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="author" content="Marti March" />
     <meta name="description" content="" />
@@ -14,12 +14,12 @@
     
     
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Aprendiendo AWS con localstack">
+  <meta name="twitter:title" content="Aprendiendo AWS con LocalStack">
   <meta name="twitter:description" content="Introducción He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles, aunque no me quedan más créditos gratis en la cuenta… Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo, como he creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.">
 
     <meta property="og:url" content="//localhost:1313/es/articulos/learninng-aws-with-localstack/">
   <meta property="og:site_name" content="Marti March">
-  <meta property="og:title" content="Aprendiendo AWS con localstack">
+  <meta property="og:title" content="Aprendiendo AWS con LocalStack">
   <meta property="og:description" content="Introducción He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles, aunque no me quedan más créditos gratis en la cuenta… Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo, como he creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.">
   <meta property="og:locale" content="en_US">
   <meta property="og:type" content="article">
@@ -73,7 +73,7 @@
       
   <article class="post">
     <header class="post-header">
-      <h1 class ="post-title">Aprendiendo AWS con localstack</h1>
+      <h1 class ="post-title">Aprendiendo AWS con LocalStack</h1>
       <div class="post-meta">
         <div>
           <svg class="icon icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>calendar</title><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
@@ -97,10 +97,12 @@
     </header>
     <div class="post-content">
       <h3 id="introducción">Introducción</h3>
-<p>He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles, aunque
-no me quedan más créditos gratis en la cuenta&hellip; Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo, como he
-creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.</p>
+<p>He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles,
+aunque no me quedan más créditos gratis en la cuenta&hellip; Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo,
+como he creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.</p>
 <ul>
+<li><a href="/es/articulos/learninng-aws-with-localstack/#objetivo">Objetivo</a></li>
+<li><a href="/es/articulos/learninng-aws-with-localstack/#instalaci%c3%b3n-de-localstack">Instalación de LocalStack</a></li>
 <li><a href="/es/articulos/learninng-aws-with-localstack/#tags">Tags</a></li>
 <li><a href="/es/articulos/learninng-aws-with-localstack/#dynamodb">DynamoDB</a></li>
 <li><a href="/es/articulos/learninng-aws-with-localstack/#terraform">Terraform</a></li>
@@ -108,7 +110,7 @@ creado un pequeño escenario en el que voy usando diferentes servicios de AWS a 
 <li><a href="/es/articulos/learninng-aws-with-localstack/#dynamodb-streams-secret-manager-y-ses">DynamoDB Streams, Secret Manager y SES</a></li>
 </ul>
 <h3 id="objetivo">Objetivo</h3>
-<p>Como quiero usar varios servicios, he desarrollado un servicio en FastApi que se conecta a DynamoDB para crear, listar y eliminar la entidad Producto. Después,  he habilitado una función Lambda que envía un correo usando SES y cuyo trigger es
+<p>Como quiero usar varios servicios, he desarrollado un servicio en FastApi que se conecta a DynamoDB para crear, listar y eliminar la entidad Producto. Después, he habilitado una función Lambda que envía un correo usando SES y cuyo trigger es
 DynamoDB Streams. Hay <a href="https://docs.localstack.cloud/references/coverage/">una lista</a> con los servicios mockeados.</p>
 <style>
     .img-center {
@@ -123,9 +125,7 @@ DynamoDB Streams. Hay <a href="https://docs.localstack.cloud/references/coverage
 <div class="img-center">
     
     
-        
-    
-    <img src="/marti-march-website/posts/learninng-aws-with-localstack/intro.png">
+    <img src="/posts/learninng-aws-with-localstack/intro.png">
 </div>
 <p>Todo el código generado está almacenado en un <a href="https://github.com/MartiMarch/fake-aws.git">repo público</a>.</p>
 <h3 id="instalación-de-localstack">Instalación de LocalStack</h3>
@@ -338,7 +338,7 @@ básica para desarrollar rápidamente y centrarme en los servicios, dejando de l
     ├── __init__.py
     ├── ProductDTO.py
     ├── ProductMapper.py
-    └─── Product.py
+    └── Product.py
 </code></pre><p>Clase adaptador de DynamoDB con las operaciones para crear, eliminar y listar la entidad Product.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> fakeaws.models.ProductMapper <span style="color:#f92672">import</span> ProductMapper
 </span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> fakeaws.models.ProductDTO <span style="color:#f92672">import</span> ProductDTO
@@ -530,7 +530,7 @@ básica para desarrollar rápidamente y centrarme en los servicios, dejando de l
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;Product with id d6012d61-f807-4b85-ad11-337ad414a556 deleted&#34;</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="terraform">Terraform</h3>
-<p>Voy a ir agregando más funcionalidades al micro, además de crear otros servicios con Localstack. El problema es que orquestar la infraestructura desde el CLI de AWS directamente puede llegar a ser engorroso cuando hay que crear varios entornos, por eso,
+<p>Voy a ir agregando más funcionalidades al micro, además de crear otros servicios con LocalStack. El problema es que orquestar la infraestructura desde el CLI de AWS directamente puede llegar a ser engorroso cuando hay que crear varios entornos, por eso,
 hay que crear un proyecto de Terraform y definir todo como IAC.</p>
 <p>Los directorios se han estructurado para diferenciar la infraestructura en los entornos de PRE y PRO, con un módulo por servicio de AWS. Hay unas variables base, para mantener el mismo nombre de proyecto y el endpoint de Localstack al invocar a los módulos,
 además de las variables de entorno de PRE y PRO.</p>
@@ -555,7 +555,7 @@ además de las variables de entorno de PRE y PRO.</p>
 └── pro
     ├── pro.tf
     └── pro.tfvars
-</code></pre><p>Para trascribir lo que se ha desplegado previamente a Terraform, se ha creado los módulos de DynamoDB y group.</p>
+</code></pre><p>Para transcribir lo que se ha desplegado previamente a Terraform, se ha creado los módulos de DynamoDB y group.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e"># Módulo de groups
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"># terraform/modules/group/main.tf
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
@@ -819,7 +819,7 @@ el código fuente ha de ser descargado por lambda desde algún lugar, así que s
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">role</span>       <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">name</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">policy_arn</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole&#34;</span>
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>Cualquier función lambda se puede invocar desde el CLI de AWS. Eso es lo que hice pero, no para de ver un log en el pod de Localstack.</p>
+</span></span></code></pre></div><p>Cualquier función lambda se puede invocar desde el CLI de AWS. Eso es lo que hice, pero solo vi un log de error en el pod de Localstack.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span> Error: waiting <span style="color:#66d9ef">for</span> Lambda Function <span style="color:#f92672">(</span>fake-aws-pre-lambda-function<span style="color:#f92672">)</span> create: unexpected state <span style="color:#e6db74">&#39;Failed&#39;</span>, wanted target <span style="color:#e6db74">&#39;Active&#39;</span>. last error: InternalError: Error <span style="color:#66d9ef">while</span> creating lambda: Docker not available
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>   with module.fake-aws-pre-lambda.aws_lambda_function.this,
@@ -898,7 +898,7 @@ el código fuente ha de ser descargado por lambda desde algún lugar, así que s
 </span></span></code></pre></div><h3 id="dynamodb-streams-secret-manager-y-ses">DynamoDB Streams, Secret Manager y SES</h3>
 <p>La última pieza por implementar es el envío del correo desde la lambda cuando se produce un evento en DynamoDB. En este caso, he implementado el envío tanto a través de SES como con SMTP. Justo por querer utilizar SMPT, es necesario usar Secret Manager para
 gestionar la contraseña del correo que envía el correo, inyectado el valor con una variable de entorno al ejecutar Terraform y recuperando desde la función lambda el secreto con la librería boto3.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e"># Módulo de secret maanger
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e"># Módulo de secret manager
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"># terraform/modules/secret_manager
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;project&#34;</span> {

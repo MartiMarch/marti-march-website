@@ -9,18 +9,18 @@
     <lastBuildDate>Tue, 24 Jun 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/es/tags/fastapi/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Aprendiendo AWS con localstack</title>
+      <title>Aprendiendo AWS con LocalStack</title>
       <link>//localhost:1313/es/articulos/learninng-aws-with-localstack/</link>
       <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/es/articulos/learninng-aws-with-localstack/</guid>
-      <description>&lt;h3 id=&#34;introducción&#34;&gt;Introducción&lt;/h3&gt;&#xA;&lt;p&gt;He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles, aunque&#xA;no me quedan más créditos gratis en la cuenta&amp;hellip; Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo, como he&#xA;creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.&lt;/p&gt;</description>
+      <description>&lt;h3 id=&#34;introducción&#34;&gt;Introducción&lt;/h3&gt;&#xA;&lt;p&gt;He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles,&#xA;aunque no me quedan más créditos gratis en la cuenta&amp;hellip; Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo,&#xA;como he creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.&lt;/p&gt;</description>
     </item>
     <item>
-      <title>Aprendiendo AWS con localstack</title>
+      <title>Aprendiendo AWS con LocalStack</title>
       <link>//localhost:1313/es/es/articulos/learninng-aws-with-localstack/</link>
       <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/es/es/articulos/learninng-aws-with-localstack/</guid>
-      <description>&lt;h3 id=&#34;introducción&#34;&gt;Introducción&lt;/h3&gt;&#xA;&lt;p&gt;He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles, aunque&#xA;no me quedan más créditos gratis en la cuenta&amp;hellip; Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo, como he&#xA;creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.&lt;/p&gt;</description>
+      <description>&lt;h3 id=&#34;introducción&#34;&gt;Introducción&lt;/h3&gt;&#xA;&lt;p&gt;He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles,&#xA;aunque no me quedan más créditos gratis en la cuenta&amp;hellip; Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo,&#xA;como he creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

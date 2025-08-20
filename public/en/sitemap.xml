@@ -3,10 +3,23 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>//localhost:1313/en/posts/</loc>
-    <lastmod>2025-05-06T00:00:00+00:00</lastmod>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/aws/</loc>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/tags/aws/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/tags/aws/"
+                />
   </url><url>
     <loc>//localhost:1313/tags/cloud/</loc>
-    <lastmod>2025-05-06T00:00:00+00:00</lastmod>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
@@ -19,7 +32,7 @@
                 />
   </url><url>
     <loc>//localhost:1313/tags/devops/</loc>
-    <lastmod>2025-05-06T00:00:00+00:00</lastmod>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en-US"
@@ -32,7 +45,88 @@
                 />
   </url><url>
     <loc>//localhost:1313/en/</loc>
-    <lastmod>2025-05-06T00:00:00+00:00</lastmod>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/fastapi/</loc>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/tags/fastapi/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/tags/fastapi/"
+                />
+  </url><url>
+    <loc>//localhost:1313/en/posts/learninng-aws-with-localstack/</loc>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/tags/localstack/</loc>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/tags/localstack/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/tags/localstack/"
+                />
+  </url><url>
+    <loc>//localhost:1313/</loc>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/"
+                />
+  </url><url>
+    <loc>//localhost:1313/tags/python/</loc>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/tags/python/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/tags/python/"
+                />
+  </url><url>
+    <loc>//localhost:1313/tags/</loc>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/tags/"
+                />
+  </url><url>
+    <loc>//localhost:1313/tags/terraform/</loc>
+    <lastmod>2025-06-24T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/tags/terraform/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/tags/terraform/"
+                />
   </url><url>
     <loc>//localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/</loc>
     <lastmod>2025-05-06T00:00:00+00:00</lastmod>
@@ -63,19 +157,6 @@
                 href="//localhost:1313/tags/linux/"
                 />
   </url><url>
-    <loc>//localhost:1313/</loc>
-    <lastmod>2025-05-06T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-US"
-                href="//localhost:1313/es/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="//localhost:1313/"
-                />
-  </url><url>
     <loc>//localhost:1313/tags/on-premise/</loc>
     <lastmod>2025-05-06T00:00:00+00:00</lastmod>
     <xhtml:link
@@ -100,19 +181,6 @@
                 rel="alternate"
                 hreflang="en-us"
                 href="//localhost:1313/tags/sysadmin/"
-                />
-  </url><url>
-    <loc>//localhost:1313/tags/</loc>
-    <lastmod>2025-05-06T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-US"
-                href="//localhost:1313/es/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="//localhost:1313/tags/"
                 />
   </url><url>
     <loc>//localhost:1313/en/about-me/</loc>

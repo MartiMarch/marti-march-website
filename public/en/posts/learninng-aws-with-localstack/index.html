@@ -1,0 +1,1085 @@
+<!doctype html>
+<html lang="en">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <title>Lerning AWS with LocalStack // Martí March</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.148.2">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Marti March" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.d024432de022f80a70ac780c7b5c1965b59484c9412974c923ed27741792fb9a.css" />
+    
+
+    
+    
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Lerning AWS with LocalStack">
+  <meta name="twitter:description" content="Introduction I have worked with various cloud providers, such as GCP, IBM and Azure. Yes, they are some of the most used, but I lack experience with the most popular one: AWS. Since I’ve used it superficially, I wanted to practice with some of the available services, although I no longer have any free credits left in my account… I began researching until I came across LocalStack, a project that emulates various AWS services in a container. So, that’s exactly what I’ll cover in this post: how I set up a small environment using different AWS services through LocalStack, Terraform and Python.">
+
+    <meta property="og:url" content="//localhost:1313/en/posts/learninng-aws-with-localstack/">
+  <meta property="og:site_name" content="Martí March">
+  <meta property="og:title" content="Lerning AWS with LocalStack">
+  <meta property="og:description" content="Introduction I have worked with various cloud providers, such as GCP, IBM and Azure. Yes, they are some of the most used, but I lack experience with the most popular one: AWS. Since I’ve used it superficially, I wanted to practice with some of the available services, although I no longer have any free credits left in my account… I began researching until I came across LocalStack, a project that emulates various AWS services in a container. So, that’s exactly what I’ll cover in this post: how I set up a small environment using different AWS services through LocalStack, Terraform and Python.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="en">
+    <meta property="article:published_time" content="2025-06-24T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-06-24T00:00:00+00:00">
+    <meta property="article:tag" content="Terraform">
+    <meta property="article:tag" content="Aws">
+    <meta property="article:tag" content="Cloud">
+    <meta property="article:tag" content="Devops">
+    <meta property="article:tag" content="Localstack">
+    <meta property="article:tag" content="Fastapi">
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="/"><img class="app-header-avatar" src="/user-photo.jpeg" alt="Marti March" /></a>
+      <span class="app-header-title">Martí March</span>
+      <hr class="menu-hr">
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/en/about-me">About me</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/en/posts/">Last posts</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/en/interests">Interests</a>
+      </nav>
+      <hr class="menu-hr">
+      <p> </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/MartiMarch" target="_blank" rel="noreferrer noopener me">
+            <svg class="icon icon-brand-github" viewBox="0 0 24 24" fill="currentColor"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/mart%C3%AD-march" target="_blank" rel="noreferrer noopener me">
+            <svg class="icon icon-brand-linkedin" viewBox="0 0 24 24" fill="currentColor"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        
+      </div>
+      <hr class="menu-hr">
+      <div class="lang-switcher">
+        <a href="/marti-march-website/es/articulos">ES</a>
+        <span class="span-languages">|</span>
+        <a href="/marti-march-website/en/posts">EN</a>
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Lerning AWS with LocalStack</h1>
+      <div class="post-meta">
+        <div>
+          <svg class="icon icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>calendar</title><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Jun 24, 2025
+        </div>
+        <div>
+          <svg class="icon icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>clock</title><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          16 min read
+        </div>
+        <div>
+          <svg class="icon icon-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>tag</title><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+              <a class="tag" href="/tags/terraform/">Terraform</a>
+              <a class="tag" href="/tags/aws/">Aws</a>
+              <a class="tag" href="/tags/cloud/">Cloud</a>
+              <a class="tag" href="/tags/devops/">Devops</a>
+              <a class="tag" href="/tags/localstack/">Localstack</a>
+              <a class="tag" href="/tags/fastapi/">Fastapi</a>
+              <a class="tag" href="/tags/python/">Python</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h3 id="introduction">Introduction</h3>
+<p>I have worked with various cloud providers, such as GCP, IBM and Azure. Yes, they are some of the most used, but I lack experience with the most popular one: AWS. Since I&rsquo;ve used it superficially, I wanted to practice with some of the available
+services, although I no longer have any free credits left in my account&hellip; I began researching until I came across LocalStack, a project that emulates various AWS services in a container. So, that&rsquo;s exactly what I&rsquo;ll cover in this post: how
+I set up a small environment using different AWS services through LocalStack, Terraform and Python.</p>
+<ul>
+<li><a href="/en/posts/learninng-aws-with-localstack/#objective">Objective</a></li>
+<li><a href="/en/posts/learninng-aws-with-localstack/#localstack-installation">LocalStack installation</a></li>
+<li><a href="/en/posts/learninng-aws-with-localstack/#tags">Tags</a></li>
+<li><a href="/en/posts/learninng-aws-with-localstack/#dynamodb">DynamoDB</a></li>
+<li><a href="/en/posts/learninng-aws-with-localstack/#terraform">Terraform</a></li>
+<li><a href="/en/posts/learninng-aws-with-localstack/#lambda-and-s3">Lambda and S3</a></li>
+<li><a href="/en/posts/learninng-aws-with-localstack/#dynamodb-streams-secret-manager-y-ses">DynamoDB Streams, Secret Manager y SES</a></li>
+</ul>
+<h3 id="objective">Objective</h3>
+<p>Since I needed to use multiple services, I developed a FastApi service that connects to DynamoDB to create, list and delete Product entities. Then, a Lambda function was enabled to send an email using SES, triggered by DynamoDB Streams. Exists
+<a href="https://docs.localstack.cloud/references/coverage/">a list</a> with all mocked services.</p>
+<style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    
+    
+    <img src="/posts/learninng-aws-with-localstack/intro.png">
+</div>
+<p>The code is available in a GitHub <a href="https://github.com/MartiMarch/fake-aws.git">public repository</a>.</p>
+<h3 id="localstack-installation">LocalStack installation</h3>
+<p>LocalStack can be deployed directly with Docker or, as I choose, on Kubernetes via the official <a href="https://github.com/localstack/helm-charts/tree/main/charts/localstack">helm chart</a>. The AWS CLI is also required, configured to point to LocalStack IP (
+192.168.2.83 in this case).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo snap install aws-cli --classic
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># I created alias &#34;awsl&#34; to be faster -&gt; alias awsl=&#39;aws --endpoint-url=http://192.168.2.83:4566&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>awsl configure
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS Access Key ID [None]: fake</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># AWS Secret Access Key [None]: fake</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Default region name [None]: fake</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Default output format [None]: json</span>
+</span></span></code></pre></div><h3 id="tags">Tags</h3>
+<p>AWS lets you tag the resources. Both &lsquo;Groups&rsquo; and &lsquo;Resource Groups Tagging API&rsquo; can be used for that. But LocalStack doesn&rsquo;t mock any of them. Nevertheless, even if LocalStack doesn&rsquo;t implement the command to filter resources by group, I&rsquo;ll tag
+every resource to follow best practices.</p>
+<p>In this case, the project called &lsquo;fake-aws&rsquo; is deployed in PRE and PRO environments, so I&rsquo;ve established the following naming convention: <style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">fake-aws-pre</span> and <style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">fake-aws-pro</span>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>awsl resource-groups create-group <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --name <span style="color:#e6db74">&#34;fwk-aws-pre&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --display-name <span style="color:#e6db74">&#34;fwk-aws-pre&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cli-input-json file://resource-pre-query.json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>awsl resource-groups list-group-resources --group fwk-aws-pre
+</span></span></code></pre></div><p>Tags must be set during resource creation. Groups can also be used as filters to organize resources as needed. For example, you could use a group to filter by <style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">fwk-aws</span> the project and the
+environment <style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">pre</span>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>awsl resource-groups create-group <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --name <span style="color:#e6db74">&#34;fwk-aws-pre&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --display-name <span style="color:#e6db74">&#34;fwk-aws-pre&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cli-input-json file://resource-pre-query.json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>awsl resource-groups list-groups
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Name&#34;</span>: <span style="color:#e6db74">&#34;fwk-aws-pre&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Description&#34;</span>: <span style="color:#e6db74">&#34;Recursos del entorno pre para el proyecto fwk-fake&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;ResourceQuery&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;Type&#34;</span>: <span style="color:#e6db74">&#34;TAG_FILTERS_1_0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;Query&#34;</span>: <span style="color:#e6db74">&#34;{\&#34;ResourceTypeFilters\&#34;:[\&#34;AWS::AllSupported\&#34;],\&#34;TagFilters\&#34;:[{\&#34;Key\&#34;:\&#34;project\&#34;,\&#34;Values\&#34;:[\&#34;fwk-fake\&#34;]},{\&#34;Key\&#34;:\&#34;env\&#34;,\&#34;Values\&#34;:[\&#34;pre\&#34;]}]}&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This flag tags every resource with the previously established convention tags:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>--tags <span style="color:#e6db74">&#39;[
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    {Key=project,Value=fwk-fake},
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    {Key=env,Value=pre}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">]&#39;</span>
+</span></span></code></pre></div><h3 id="dynamodb">DynamoDB</h3>
+<p>Before DynamoDB deployment, it&rsquo;s need to create in KMS the encrypted communication credentials.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>awsl kms create-key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --description <span style="color:#e6db74">&#34;Clave SSE para el DynamoDB de pre&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --tags TagKey<span style="color:#f92672">=</span>project,TagValue<span style="color:#f92672">=</span>fwk-aws-pre TagKey<span style="color:#f92672">=</span>env,TagValue<span style="color:#f92672">=</span>pre <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --key-usage ENCRYPT_DECRYPT <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --customer-master-key-spec SYMMETRIC_DEFAULT
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>awsl kms list-keys
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Keys&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;KeyId&#34;</span>: <span style="color:#e6db74">&#34;0f291778-4cb1-43a2-bc5f-e47638b4854c&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;KeyArn&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:kms:us-east-1:000000000000:key/0f291778-4cb1-43a2-bc5f-e47638b4854c&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>I have also created an alias to avoid using the ID secret.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>awsl kms create-alias <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --alias-name alias/fwk-aws-pre-dynamodb-sse <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --target-key-id 0f291778-4cb1-43a2-bc5f-e47638b4854c
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>awsl kms tag-resource <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --key-id alias/fwk-aws-pre-dynamodb-sse <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --tags TagKey<span style="color:#f92672">=</span>project,TagValue<span style="color:#f92672">=</span>fwk-aws-pre TagKey<span style="color:#f92672">=</span>env,TagValue<span style="color:#f92672">=</span>pre
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>awsl kms list-aliases
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;Aliases&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;AliasName&#34;</span>: <span style="color:#e6db74">&#34;alias/fwk-aws-pre-dynamodb-sse&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;AliasArn&#34;</span>: <span style="color:#e6db74">&#34;arn:aws:kms:us-east-1:000000000000:alias/fwk-aws-pre-dynamodb-sse&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;TargetKeyId&#34;</span>: <span style="color:#e6db74">&#34;0f291778-4cb1-43a2-bc5f-e47638b4854c&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;CreationDate&#34;</span>: <span style="color:#e6db74">&#34;2025-06-14T21:53:18.071846+02:00&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Once alias is created, DynamoDB can be deployed:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>awsl dynamodb create-table <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    <span style="color:#75715e"># The table name only accepts alphanumeric characters, underscores, and must be between 3 and 255 characters long</span>
+</span></span><span style="display:flex;"><span>    --table-name fake-aws-pre-dynamodb <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    <span style="color:#75715e"># List of required attributes</span>
+</span></span><span style="display:flex;"><span>    --attribute-definitions <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        AttributeName<span style="color:#f92672">=</span>productId,AttributeType<span style="color:#f92672">=</span>S <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        AttributeName<span style="color:#f92672">=</span>company,AttributeType<span style="color:#f92672">=</span>S <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        AttributeName<span style="color:#f92672">=</span>provider,AttributeType<span style="color:#f92672">=</span>S <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        AttributeName<span style="color:#f92672">=</span>price,AttributeType<span style="color:#f92672">=</span>N <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        AttributeName<span style="color:#f92672">=</span>stock,AttributeType<span style="color:#f92672">=</span>N <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --key-schema <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        <span style="color:#75715e"># If it is a HASH, it acts as a unique key — unless a RANGE is used on another attribute. In that case, duplicates are allowed as long as the RANGE attribute has a different value</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># One attribute must be of type HASH, no exceptions.</span>
+</span></span><span style="display:flex;"><span>        AttributeName<span style="color:#f92672">=</span>productId,KeyType<span style="color:#f92672">=</span>HASH <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    <span style="color:#75715e"># You can create Global Secondary Indexes (GSI) to query your data using attributes other than the primary key</span>
+</span></span><span style="display:flex;"><span>    --global-secondary-indexes <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        <span style="color:#e6db74">&#39;[
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                &#34;IndexName&#34;: &#34;IndexCompany&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                &#34;KeySchema&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    {&#34;AttributeName&#34;: &#34;company&#34;, &#34;KeyType&#34;: &#34;HASH&#34;}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                ],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                &#34;Projection&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    &#34;ProjectionType&#34;: &#34;ALL&#34; # Incluye todos los atributos del ítem en los resultados
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                },
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                &#34;ProvisionedThroughput&#34;: { # solo se usa si tu tabla está en modo provisionado
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    &#34;ReadCapacityUnits&#34;: 10,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    &#34;WriteCapacityUnits&#34;: 5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            },
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                &#34;IndexName&#34;: &#34;IndexProveder&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                &#34;KeySchema&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    {&#34;AttributeName&#34;: &#34;provider&#34;, &#34;KeyType&#34;: &#34;HASH&#34;}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                ],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                &#34;Projection&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    &#34;ProjectionType&#34;: &#34;ALL&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                },
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                &#34;ProvisionedThroughput&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    &#34;ReadCapacityUnits&#34;: 10,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    &#34;WriteCapacityUnits&#34;: 5
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        }]&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    <span style="color:#75715e"># PROVISIONED → Preconfigured capacity, PAY_PER_REQUEST → On-demand billing (pay per use)</span>
+</span></span><span style="display:flex;"><span>    --billing-mode PROVISIONED <span style="color:#ae81ff">\ </span>
+</span></span><span style="display:flex;"><span>    --provisioned-throughput ReadCapacityUnits<span style="color:#f92672">=</span>10,WriteCapacityUnits<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    <span style="color:#75715e"># Enable DynamoDB Streams</span>
+</span></span><span style="display:flex;"><span>    --stream-specification StreamEnabled<span style="color:#f92672">=</span>true,StreamViewType<span style="color:#f92672">=</span>NEW_AND_OLD_IMAGES <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --sse-specification Enabled<span style="color:#f92672">=</span>true,SSEType<span style="color:#f92672">=</span>KMS,KMSMasterKeyId<span style="color:#f92672">=</span>alias/fwk-aws-pre-dynamodb-sse <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    <span style="color:#75715e"># The key is stored in the KMS service and is used to encrypt communications</span>
+</span></span><span style="display:flex;"><span>    --tags Key<span style="color:#f92672">=</span>project,Value<span style="color:#f92672">=</span>fwk-aws-pre Key<span style="color:#f92672">=</span>env,Value<span style="color:#f92672">=</span>pre
+</span></span></code></pre></div><p>DynamoDB tables can be listed to check if they were created correctly.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>awsl dynamodb list-tables
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;TableNames&#34;</span>: [
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;fake-aws-pre-dynamodb&#34;</span>
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>With that, we get a DynamoDB working database (NoSQL), although without a service connected to it, it isn&rsquo;t very useful. So, I&rsquo;ve created a FastApi Python project with Poetry to create, delete and list product entities. It implements a basic hexagonal
+pattern to quickly develop the service and focus on services integration, leaving aside backend code. Even if it&rsquo;s not perfect, it will be helpful to integrate AWS services.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>poetry init
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># This command will guide you through creating your pyproject.toml config.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Package name [fake-aws]:  fwk-aws-micro</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Version [0.1.0]:  0.0.0</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Description []:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Author [marti &lt;marti_march@protonmail.com&gt;, n to skip]:  n</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># License []:</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Compatible Python versions [^3.12]:  ^3.9</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Would you like to define your main dependencies interactively? (yes/no) [yes] no</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Would you like to define your development dependencies interactively? (yes/no) [yes] no</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Generated file</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [tool.poetry]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># name = &#34;fwk-aws-micro&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># version = &#34;0.0.0&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># description = &#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># authors = [&#34;Your Name &lt;you@example.com&gt;&#34;]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># readme = &#34;README.md&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [tool.poetry.dependencies]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># python = &#34;^3.9&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># [build-system]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># requires = [&#34;poetry-core&#34;]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># build-backend = &#34;poetry.core.masonry.api&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Do you confirm generation? (yes/no) [yes] yes</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>poetry add boto3
+</span></span><span style="display:flex;"><span>poetry add pydantic
+</span></span><span style="display:flex;"><span>poetry add fastapi
+</span></span></code></pre></div><p>Python project follows this folder structure:</p>
+<pre tabindex="0"><code>├── adapters
+│   ├── dynamodb.py
+│   ├── __init__.py
+│   └── ses.py
+├── api.py
+└── models
+    ├── __init__.py
+    ├── ProductDTO.py
+    ├── ProductMapper.py
+    └── Product.py
+</code></pre><p>Adapter class for DynamoDB used to create, eliminate, and list Product entity.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> fakeaws.models.ProductMapper <span style="color:#f92672">import</span> ProductMapper
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> fakeaws.models.ProductDTO <span style="color:#f92672">import</span> ProductDTO
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> fakeaws.models.Product <span style="color:#f92672">import</span> Product
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> decimal <span style="color:#f92672">import</span> Decimal
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> List
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> uuid <span style="color:#f92672">import</span> UUID
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> boto3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DynamoDB</span>:
+</span></span><span style="display:flex;"><span>    ENDPOINT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;http://192.168.2.83:4566&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_service <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>resource(
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;dynamodb&#39;</span>,
+</span></span><span style="display:flex;"><span>            region_name<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;fake&#39;</span>,
+</span></span><span style="display:flex;"><span>            aws_access_key_id<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;fake&#39;</span>,
+</span></span><span style="display:flex;"><span>            aws_secret_access_key<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;fake&#39;</span>,
+</span></span><span style="display:flex;"><span>            endpoint_url<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>ENDPOINT,
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@property</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">service</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_service
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">delete</span>(self, product_id: str):
+</span></span><span style="display:flex;"><span>        table <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>service<span style="color:#f92672">.</span>Table(<span style="color:#e6db74">&#34;fake-aws-pre-dynamodb&#34;</span>)
+</span></span><span style="display:flex;"><span>        table<span style="color:#f92672">.</span>delete_item(
+</span></span><span style="display:flex;"><span>            Key<span style="color:#f92672">=</span>{
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;productId&#34;</span>: product_id
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            ReturnValues<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ALL_OLD&#34;</span>
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;status&#34;</span>: <span style="color:#e6db74">&#34;ok&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;message&#34;</span>: <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Product with id </span><span style="color:#e6db74">{</span>product_id<span style="color:#e6db74">}</span><span style="color:#e6db74"> deleted&#34;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">save</span>(self, product_dto: ProductDTO) <span style="color:#f92672">-&gt;</span> ProductDTO:
+</span></span><span style="display:flex;"><span>        product <span style="color:#f92672">=</span> ProductMapper<span style="color:#f92672">.</span>dto_to_product(product_dto)
+</span></span><span style="display:flex;"><span>        products_table <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>service<span style="color:#f92672">.</span>Table(<span style="color:#e6db74">&#39;fake-aws-pre-dynamodb&#39;</span>)
+</span></span><span style="display:flex;"><span>        products_table<span style="color:#f92672">.</span>put_item(
+</span></span><span style="display:flex;"><span>            Item<span style="color:#f92672">=</span>{
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;productId&#34;</span>: str(product<span style="color:#f92672">.</span>id),
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;company&#34;</span>: product<span style="color:#f92672">.</span>company,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;provider&#34;</span>: product<span style="color:#f92672">.</span>provider,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;price&#34;</span>: Decimal(str(product<span style="color:#f92672">.</span>price)),
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;stock&#34;</span>: product<span style="color:#f92672">.</span>stock,
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ProductMapper<span style="color:#f92672">.</span>product_to_dto(product)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">list</span>(self) <span style="color:#f92672">-&gt;</span> List[ProductDTO]:
+</span></span><span style="display:flex;"><span>        products_dto: list[ProductDTO] <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        products_table <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>service<span style="color:#f92672">.</span>Table(<span style="color:#e6db74">&#39;fake-aws-pre-dynamodb&#39;</span>)
+</span></span><span style="display:flex;"><span>        response <span style="color:#f92672">=</span> products_table<span style="color:#f92672">.</span>scan()
+</span></span><span style="display:flex;"><span>        items <span style="color:#f92672">=</span> response<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;Items&#39;</span>, [])
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> item <span style="color:#f92672">in</span> items:
+</span></span><span style="display:flex;"><span>            product <span style="color:#f92672">=</span> Product(
+</span></span><span style="display:flex;"><span>                company<span style="color:#f92672">=</span>item<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;company&#39;</span>),
+</span></span><span style="display:flex;"><span>                provider<span style="color:#f92672">=</span>item<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;provider&#39;</span>),
+</span></span><span style="display:flex;"><span>                price<span style="color:#f92672">=</span>item<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;price&#39;</span>),
+</span></span><span style="display:flex;"><span>                stock<span style="color:#f92672">=</span>item<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;stock&#39;</span>),
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>            product<span style="color:#f92672">.</span>id <span style="color:#f92672">=</span> UUID(item<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;productId&#39;</span>))
+</span></span><span style="display:flex;"><span>            product_dto: ProductDTO <span style="color:#f92672">=</span> ProductMapper<span style="color:#f92672">.</span>product_to_dto(product)
+</span></span><span style="display:flex;"><span>            products_dto<span style="color:#f92672">.</span>append(product_dto)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> products_dto
+</span></span></code></pre></div><p>Regarding the models packages, I created an entity for Product, a DTO for the adapters and a mapper to map the DTO object to the entity and vice versa.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> uuid
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Product</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__init__</span>(self, company: str, provider: str, price: float, stock: int):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_id <span style="color:#f92672">=</span> uuid<span style="color:#f92672">.</span>uuid4()
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_company <span style="color:#f92672">=</span> company
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_provider <span style="color:#f92672">=</span> provider
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_price <span style="color:#f92672">=</span> price
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_stock <span style="color:#f92672">=</span> stock
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@property</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">id</span>(self) <span style="color:#f92672">-&gt;</span> uuid<span style="color:#f92672">.</span>UUID:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_id
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@id.setter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">id</span>(self, id: uuid<span style="color:#f92672">.</span>UUID):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_id <span style="color:#f92672">=</span> id
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@property</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">company</span>(self) <span style="color:#f92672">-&gt;</span> str:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_company
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@company.setter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">company</span>(self, company: str):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_company <span style="color:#f92672">=</span> company
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># There&#39;re a more getters/setters...</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> pydantic <span style="color:#f92672">import</span> BaseModel
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProductDTO</span>(BaseModel):
+</span></span><span style="display:flex;"><span>    productId: str <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    company: str
+</span></span><span style="display:flex;"><span>    provider: str
+</span></span><span style="display:flex;"><span>    price: float
+</span></span><span style="display:flex;"><span>    stock: int
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> fakeaws.models.ProductDTO <span style="color:#f92672">import</span> ProductDTO
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> fakeaws.models.Product <span style="color:#f92672">import</span> Product
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProductMapper</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@classmethod</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">product_to_dto</span>(cls, product: Product) <span style="color:#f92672">-&gt;</span> ProductDTO:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ProductDTO(
+</span></span><span style="display:flex;"><span>            productId<span style="color:#f92672">=</span>str(product<span style="color:#f92672">.</span>id),
+</span></span><span style="display:flex;"><span>            company<span style="color:#f92672">=</span>product<span style="color:#f92672">.</span>company,
+</span></span><span style="display:flex;"><span>            provider<span style="color:#f92672">=</span>product<span style="color:#f92672">.</span>provider,
+</span></span><span style="display:flex;"><span>            price<span style="color:#f92672">=</span>product<span style="color:#f92672">.</span>price,
+</span></span><span style="display:flex;"><span>            stock<span style="color:#f92672">=</span>product<span style="color:#f92672">.</span>stock
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@classmethod</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">dto_to_product</span>(cls, dto: ProductDTO) <span style="color:#f92672">-&gt;</span> Product:
+</span></span><span style="display:flex;"><span>        product <span style="color:#f92672">=</span> Product(
+</span></span><span style="display:flex;"><span>            company<span style="color:#f92672">=</span>dto<span style="color:#f92672">.</span>company,
+</span></span><span style="display:flex;"><span>            provider<span style="color:#f92672">=</span>dto<span style="color:#f92672">.</span>provider,
+</span></span><span style="display:flex;"><span>            price<span style="color:#f92672">=</span>dto<span style="color:#f92672">.</span>price,
+</span></span><span style="display:flex;"><span>            stock<span style="color:#f92672">=</span>dto<span style="color:#f92672">.</span>stock
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> dto<span style="color:#f92672">.</span>productId <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>            product<span style="color:#f92672">.</span>productId <span style="color:#f92672">=</span> dto<span style="color:#f92672">.</span>productId
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> product
+</span></span></code></pre></div><p>Once the microservice is deployed, requests can be sent to the API, storing the information into DynamoDB.</p>
+<ul>
+<li>Product creation</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --location <span style="color:#e6db74">&#39;http://localhost:8080/dynamodb&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --header <span style="color:#e6db74">&#39;Content-Type: application/json&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --data <span style="color:#e6db74">&#39;{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;company&#34;: &#34;bic&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;provider&#34;: &#34;alpine&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;price&#34;: 9.99,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;stock&#34;: 10
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }&#39;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;productId&#34;</span>: <span style="color:#e6db74">&#34;d6012d61-f807-4b85-ad11-337ad414a556&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;company&#34;</span>: <span style="color:#e6db74">&#34;bic&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;provider&#34;</span>: <span style="color:#e6db74">&#34;alpine&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;price&#34;</span>: <span style="color:#ae81ff">9.99</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;stock&#34;</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>Listing products</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl --location <span style="color:#e6db74">&#39;http://localhost:8080/dynamodb&#39;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>[
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;productId&#34;</span>: <span style="color:#e6db74">&#34;c375b6ab-562a-4d20-a5cc-710286b67be6&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;company&#34;</span>: <span style="color:#e6db74">&#34;bic&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;provider&#34;</span>: <span style="color:#e6db74">&#34;alpine&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;price&#34;</span>: <span style="color:#ae81ff">9.99</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;stock&#34;</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;productId&#34;</span>: <span style="color:#e6db74">&#34;d6012d61-f807-4b85-ad11-337ad414a556&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;company&#34;</span>: <span style="color:#e6db74">&#34;bic&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;provider&#34;</span>: <span style="color:#e6db74">&#34;alpine&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;price&#34;</span>: <span style="color:#ae81ff">9.99</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;stock&#34;</span>: <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>]
+</span></span></code></pre></div><ul>
+<li>Deletion of a Product</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --location  <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --request DELETE <span style="color:#e6db74">&#39;http://localhost:8080/dynamodb/d6012d61-f807-4b85-ad11-337ad414a556&#39;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;status&#34;</span>: <span style="color:#e6db74">&#34;ok&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;Product with id d6012d61-f807-4b85-ad11-337ad414a556 deleted&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="terraform">Terraform</h3>
+<p>I&rsquo;m gonna add more functionalities to the microservice while LocalStack services mocks are deployed. However, infrastructure orchestration can become a problem if it&rsquo;s managed using CLI only, especially as the number of AWS services and configuration
+increase. So, to make it easier, I&rsquo;ve created a Terraform project to define everything as IaC.</p>
+<p>Folders are being structured to differentiate the PRE and PRO infrastructure environments, with a module for each AWS service. There are base variables to set the project name and LocalStack endpoint every time the modules are invoked, as well as
+environment variables for the PRE and PRO environments.</p>
+<pre tabindex="0"><code>├── base
+│   ├── base.tfvars
+│   └── lambda.py
+├── modules
+│   ├── dynamodb
+│   │   └── main.tf
+│   ├── group
+│   │   └── main.tf
+│   ├── lambda
+│   │   └── main.tf
+│   ├── s3
+│   │   ├── lambda.zip
+│   │   └── main.tf
+│   └── secret_manager
+│       └── main.tf
+├── pre
+│   ├── pre.tf
+│   └──pre.tfvars
+└── pro
+    ├── pro.tf
+    └── pro.tfvars
+</code></pre><p>To transcribe what has been previously deployed to Terraform, the DynamoDB and group modules have been created.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e"># Groups module
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># terraform/modules/group/main.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;project&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;env&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_resourcegroups_group&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">description</span>  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Grupo de recursos para </span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> en el entorno </span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">resource_query</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">query</span> <span style="color:#f92672">=</span> jsonencode({
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">ResourceTypeFilters</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;AWS::AllSupported&#34;</span>]
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">TagFilters</span> <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">Key</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;project&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">Values</span> <span style="color:#f92672">=</span> [var.<span style="color:#a6e22e">project</span>]
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">Key</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;env&#34;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#a6e22e">Values</span> <span style="color:#f92672">=</span> [var.<span style="color:#a6e22e">env</span>]
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      ]
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;TAG_FILTERS_1_0&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">tags</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">project</span> <span style="color:#f92672">=</span> var.<span style="color:#a6e22e">project</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">env</span>     <span style="color:#f92672">=</span> var.<span style="color:#a6e22e">env</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e"># Dynamodb module
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># terraform/modules/dynamodb/main.tf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;project&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;env&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_kms_key&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">description</span>              <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Clave SSE para el DynamoDB de pre&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">key_usage</span>                <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ENCRYPT_DECRYPT&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">customer_master_key_spec</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;SYMMETRIC_DEFAULT&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">enable_key_rotation</span>      <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">tags</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">project</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">env</span>     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_kms_alias&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>          <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;alias/</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-dynamodb-see&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">target_key_id</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_kms_key</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">key_id</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_dynamodb_table&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>           <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-dynamodb&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">billing_mode</span>   <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;PROVISIONED&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">read_capacity</span>  <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">write_capacity</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">hash_key</span>       <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;productId&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">attribute</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;productId&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;S&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">attribute</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;company&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;S&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">attribute</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;provider&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;S&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">global_secondary_index</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">name</span>            <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;IndexCompany&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">hash_key</span>        <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;company&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">projection_type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ALL&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">read_capacity</span>   <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">write_capacity</span>  <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">global_secondary_index</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">name</span>            <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;IndexProveder&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">hash_key</span>        <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;provider&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">projection_type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ALL&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">read_capacity</span>   <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">write_capacity</span>  <span style="color:#f92672">=</span> <span style="color:#ae81ff">5</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">stream_enabled</span>   <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">stream_view_type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;NEW_AND_OLD_IMAGES&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">server_side_encryption</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">enabled</span>     <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">kms_key_arn</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;arn:aws:kms:us-east-1:000000000000:alias/</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-dynamodb-sse&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">tags</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">project</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">env</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;table_stream_arn&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_dynamodb_table</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">stream_arn</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>*.tfvars have also been created for variables common to all environments along with variables specific to each environment.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e"># terraform/pre/pre.tfvars
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">env</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;pre&#34;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e"># terraform/base/base.tfvars
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">project</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;fake-aws&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">localstack_endpoint</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://192.168.2.83:4566&#34;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>terraform plan -var-file<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;../base/base.tfvars&#34;</span> -var-file<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;pre.tfvars&#34;</span>
+</span></span><span style="display:flex;"><span>terraform apply -var-file<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;../base/base.tfvars&#34;</span> -var-file<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;pre.tfvars&#34;</span> -auto-approve
+</span></span></code></pre></div><h3 id="lambda-and-s3">Lambda and S3</h3>
+<p>As I mentioned in the introduction, I want to use Lambda to send an email. It&rsquo;s a Python function with a certain name; Localstack will only print the logs to the pod when invoked. However, an S3 bucket also needs to be created since Lambda has to
+download the source code from somewhere, so two modules have been created, one for S3 and one for Lambda.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e"># S3 module
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># terraform/modules/s3
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;project&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;env&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Bucket definition
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_s3_bucket&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-s3&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">tags</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">project</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">env</span>     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Needed permissions to use the binary file pushed into the bucket by lambda
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_s3_bucket_ownership_controls&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_s3_bucket</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">id</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rule</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">object_ownership</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;BucketOwnerPreferred&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_s3_bucket_public_access_block&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_s3_bucket</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">id</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">block_public_acls</span>       <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">block_public_policy</span>     <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ignore_public_acls</span>      <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">restrict_public_buckets</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_s3_object&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">bucket</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_s3_bucket</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">id</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">key</span>    <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;lambda.zip&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">source</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">path</span>.module<span style="color:#e6db74">}</span><span style="color:#e6db74">/lambda.zip&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">etag</span>   <span style="color:#f92672">=</span> filemd5(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">path</span>.module<span style="color:#e6db74">}</span><span style="color:#e6db74">/lambda.zip&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">tags</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">project</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">env</span>     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># All these outputs are necessary for the creation of the lambda
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;bucket_name&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_s3_bucket</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">bucket</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;object_key&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_s3_object</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">key</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;object_etag&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_s3_object</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">etag</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e"># Lambda module
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># terraform/modules/lambda
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;project&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;env&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;bucket_name&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;object_key&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;object_etag&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;table_stream_arn&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Defining the IAM role required to access the bucket
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-lambda-role&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">assume_role_policy</span> <span style="color:#f92672">=</span> jsonencode({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Version</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;2012-10-17&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">Statement</span> <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">Action</span>    <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;sts:AssumeRole&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">Effect</span>    <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Allow&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">Principal</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">Service</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;lambda.amazonaws.com&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        ]
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">tags</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">project</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">env</span>     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Lamda function definition
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_lambda_function&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">s3_bucket</span>        <span style="color:#f92672">=</span> var.<span style="color:#a6e22e">bucket_name</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">s3_key</span>           <span style="color:#f92672">=</span> var.<span style="color:#a6e22e">object_key</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    # Function name, if it does not match the script name it will fail
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">function_name</span>    <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-lambda-function&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">role</span>             <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">arn</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">handler</span>          <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;lambda.handler&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">source_code_hash</span> <span style="color:#f92672">=</span> base64sha256(var.<span style="color:#a6e22e">object_etag</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">runtime</span>          <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;python3.11&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">timeout</span>          <span style="color:#f92672">=</span> <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">memory_size</span>      <span style="color:#f92672">=</span> <span style="color:#ae81ff">512</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">tags</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">project</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">env</span>     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role_policy_attachment&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">role</span>       <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">name</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">policy_arn</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Any lambda function can be called using the AWS CLI. That&rsquo;s what I did, but I only saw an error log in the Localstack pod.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span> Error: waiting <span style="color:#66d9ef">for</span> Lambda Function <span style="color:#f92672">(</span>fake-aws-pre-lambda-function<span style="color:#f92672">)</span> create: unexpected state <span style="color:#e6db74">&#39;Failed&#39;</span>, wanted target <span style="color:#e6db74">&#39;Active&#39;</span>. last error: InternalError: Error <span style="color:#66d9ef">while</span> creating lambda: Docker not available
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   with module.fake-aws-pre-lambda.aws_lambda_function.this,
+</span></span><span style="display:flex;"><span>   on ../modules/lambda/main.tf line 73, in resource <span style="color:#e6db74">&#34;aws_lambda_function&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span>:
+</span></span><span style="display:flex;"><span>   73: resource <span style="color:#e6db74">&#34;aws_lambda_function&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> <span style="color:#f92672">{</span>
+</span></span></code></pre></div><p>For this reason, I decided to create a very basic lambda that prints a &ldquo;Hello world!&rdquo; and try out different modifications.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">handler</span>(event, context):
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;Hello world!&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>zip lambda.zip labda.py
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>awsl lambda create-function <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --function-name test <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --runtime python3.11 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --handler lambda.handler <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --role arn:aws:iam::000000000000:role/lambda-role <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --zip-file fileb://lambda.zip
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>awsl lambda invoke <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --function-name test <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --payload <span style="color:#e6db74">&#39;{&#34;test&#34;:&#34;value&#34;}&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --cli-binary-format raw-in-base64-out <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  output.txt
+</span></span></code></pre></div><p>After much research, I determined that the inability to execute the lambda stems from two causes:</p>
+<ul>
+<li>The Localstack pod cannot execute lambda functions because the container is unable to orchestrate containers</li>
+<li>The lambda function container is unable to return the response to the Localstack pod, which points to the localhost domain</li>
+</ul>
+<p>To resolve the issues, I modified the Helm chart, adding certain environment variables, creating a new container that inherits from the one already configured but using the Docker CLI, and mounting the Docker socket volume.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Dockerfile" data-lang="Dockerfile"><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> localstack/localstack:latest</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apt -y update <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span><span style="color:#f92672">&amp;&amp;</span> apt -y install <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     apt-transport-https <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     ca-certificates <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     curl <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     gnupg <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     software-properties-common <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span><span style="color:#f92672">&amp;&amp;</span> install -m <span style="color:#ae81ff">0755</span> -d /etc/apt/keyrings <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span><span style="color:#f92672">&amp;&amp;</span> curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span><span style="color:#f92672">&amp;&amp;</span> chmod a+r /etc/apt/keyrings/docker.asc <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span><span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;deb [arch=</span><span style="color:#66d9ef">$(</span>dpkg --print-architecture<span style="color:#66d9ef">)</span><span style="color:#e6db74"> signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian </span><span style="color:#66d9ef">$(</span>. /etc/os-release <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>VERSION_CODENAME<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">)</span><span style="color:#e6db74"> stable&#34;</span> | tee /etc/apt/sources.list.d/docker.list &gt; /dev/null <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span><span style="color:#f92672">&amp;&amp;</span> apt -y update <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span><span style="color:#f92672">&amp;&amp;</span> apt install -y <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     docker-ce <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     docker-ce-cli <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     containerd.io <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     docker-buildx-plugin <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     docker-compose-plugin<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">image</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">repository</span>: <span style="color:#e6db74">&#34;pre.docker.nexus.com/localstack:0.0.0&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">docker-socket</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">hostPath</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/var/run/docker.sock</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">docker-socket</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/var/run/docker.sock</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">extraEnvVars</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">LOCALSTACK_HOST</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;192.168.2.83:4566&#34;</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">DEBUG</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;1&#34;</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">DOCKER_BRIDGE_IP</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;192.168.2.83&#34;</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">GATEWAY_LISTEN</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;0.0.0.0:4566&#34;</span>
+</span></span></code></pre></div><p>With all of that enabled, it is now possible to invoke the lambda function without errors.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>awsl lambda invoke --function-name test --payload <span style="color:#e6db74">&#39;{&#34;test&#34;:&#34;value&#34;}&#39;</span> --cli-binary-format raw-in-base64-out output.txt
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;StatusCode&#34;</span>: 200,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;ExecutedVersion&#34;</span>: <span style="color:#e6db74">&#34;</span>$LATEST<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="dynamodb-streams-secret-manager-y-ses">DynamoDB Streams, Secret Manager y SES</h3>
+<p>The last piece to implement is sending the email from the lambda when an event occurs in DynamoDB. In this case, I implemented sending via both SES and SMTP. Because I want to use SMTP, it&rsquo;s necessary to use Secret Manager to manage the password
+for the email that sends the email, injecting the value with an environment variable when running Terraform, and retrieving the secret from the lambda function using the boto3 library.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e"># Secret maanger module
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># terraform/modules/secret_manager
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;project&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;env&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Variable que se inyectan como varaible de entorno
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;sender_email&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">type</span>      <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">sensitive</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;sender_email_secret&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">type</span>      <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">sensitive</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;receiver_email&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">type</span>      <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">sensitive</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_secretsmanager_secret&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-email-secret&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">tags</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">project</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">env</span>     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_secretsmanager_secret_version&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">secret_id</span>     <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_secretsmanager_secret</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">id</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">secret_string</span> <span style="color:#f92672">=</span> jsonencode({
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">sender_email</span>        <span style="color:#f92672">=</span> var.<span style="color:#a6e22e">sender_email</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">sender_email_secret</span> <span style="color:#f92672">=</span> var.<span style="color:#a6e22e">sender_email_secret</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">reciever_email</span>      <span style="color:#f92672">=</span> var.<span style="color:#a6e22e">receiver_email</span>
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">output</span> <span style="color:#e6db74">&#34;email_secret_arn&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_secretsmanager_secret</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">arn</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The environment variables that Terraform will use to configure the secrets value.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export TF_VAR_sender_email<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fake_sender_email@gmail.com&#34;</span>
+</span></span><span style="display:flex;"><span>export TF_VAR_sender_email_secret<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fake_password&#34;</span>
+</span></span><span style="display:flex;"><span>export TF_VAR_receiver_email<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fake_receiver_email@gmail.com&#34;</span>
+</span></span></code></pre></div><p>To enable DynamoDB streams, you need to modify the assigned permissions, both to be able to enable DynamoDB streams and to manage the secret.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-terraform" data-lang="terraform"><span style="display:flex;"><span><span style="color:#75715e"># Lambda module
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># terraform/modules/lambda
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;email_secret_arn&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">sensitive</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role_policy&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">project</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-</span><span style="color:#e6db74">${</span>var.<span style="color:#a6e22e">env</span><span style="color:#e6db74">}</span><span style="color:#e6db74">-lambda-dynamodb-policy&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">role</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">id</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">policy</span> <span style="color:#f92672">=</span> jsonencode({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Version</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;2012-10-17&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Statement</span> <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">Effect</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Allow&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            # Permisos para DynamoDB Streams
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#a6e22e">Action</span> <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;dynamodb:DescribeStream&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;dynamodb:GetRecords&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;dynamodb:GetShardIterator&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;dynamodb:ListStreams&#34;</span>,
+</span></span><span style="display:flex;"><span>            ]<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            # ARN del stream de DynamoDB
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#a6e22e">Resource</span> <span style="color:#f92672">=</span> var.<span style="color:#a6e22e">table_stream_arn</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            # Permission to read a secret in Secrets Manager
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#a6e22e">Effect</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Allow&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">Action</span> <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;secretsmanager:GetSecretValue&#34;</span>
+</span></span><span style="display:flex;"><span>            ]
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">Resource</span> <span style="color:#f92672">=</span> var.<span style="color:#a6e22e">email_secret_arn</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>}<span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Bind a DynamoDB Stream to the Lambda so that it runs automatically when there are changes to the table
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_lambda_event_source_mapping&#34;</span> <span style="color:#e6db74">&#34;this&#34;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">event_source_arn</span> <span style="color:#f92672">=</span> var.<span style="color:#a6e22e">table_stream_arn</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">function_name</span>    <span style="color:#f92672">=</span> <span style="color:#a6e22e">aws_lambda_function</span>.<span style="color:#a6e22e">this</span>.<span style="color:#a6e22e">arn</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">starting_position</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;LATEST&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">enabled</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>As for the Python code for the lambda, it consists of two functions, each implementing either SES or SMTP.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> email.mime.text <span style="color:#f92672">import</span> MIMEText
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> smtplib
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> boto3
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> json
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>GMAIL_SMTP_DOMAIN: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;smtp.gmail.com&#39;</span>
+</span></span><span style="display:flex;"><span>GMAIL_SMTP_PORT: int <span style="color:#f92672">=</span> <span style="color:#ae81ff">587</span>
+</span></span><span style="display:flex;"><span>REGION: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;us-east-1&#39;</span>
+</span></span><span style="display:flex;"><span>LOCALSTACK_ENDPOINT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;http://192.168.2.83:4566&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">handler</span>(event, context):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># SMTP</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># send_email_via_smtp()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># SES</span>
+</span></span><span style="display:flex;"><span>    send_email_via_ses()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">send_email_via_smtp</span>():
+</span></span><span style="display:flex;"><span>    sm_client <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>client(<span style="color:#e6db74">&#39;secretsmanager&#39;</span>)
+</span></span><span style="display:flex;"><span>    secret_content <span style="color:#f92672">=</span> json<span style="color:#f92672">.</span>loads(
+</span></span><span style="display:flex;"><span>        sm_client<span style="color:#f92672">.</span>get_secret_value(SecretId<span style="color:#f92672">=</span>os<span style="color:#f92672">.</span>environ[<span style="color:#e6db74">&#39;SM_SECRET_NAME&#39;</span>])
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    sender_email <span style="color:#f92672">=</span> secret_content[<span style="color:#e6db74">&#39;sender_email&#39;</span>]
+</span></span><span style="display:flex;"><span>    sender_email_secret <span style="color:#f92672">=</span> secret_content[<span style="color:#e6db74">&#39;sender_email_secret&#39;</span>]
+</span></span><span style="display:flex;"><span>    receiver_email <span style="color:#f92672">=</span> secret_content[<span style="color:#e6db74">&#39;receiver_email&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    msg <span style="color:#f92672">=</span> MIMEText(<span style="color:#e6db74">&#39;Hello World!&#39;</span>)
+</span></span><span style="display:flex;"><span>    msg[<span style="color:#e6db74">&#39;Subject&#39;</span>] <span style="color:#f92672">=</span>  <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Product has been removed&#39;</span>
+</span></span><span style="display:flex;"><span>    msg[<span style="color:#e6db74">&#39;From&#39;</span>] <span style="color:#f92672">=</span> sender_email_secret
+</span></span><span style="display:flex;"><span>    msg[<span style="color:#e6db74">&#39;To&#39;</span>] <span style="color:#f92672">=</span> receiver_email
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> smtplib<span style="color:#f92672">.</span>SMTP(GMAIL_SMTP_DOMAIN, GMAIL_SMTP_PORT) <span style="color:#66d9ef">as</span> gmail:
+</span></span><span style="display:flex;"><span>        gmail<span style="color:#f92672">.</span>starttls()
+</span></span><span style="display:flex;"><span>        gmail<span style="color:#f92672">.</span>login(sender_email, sender_email_secret)
+</span></span><span style="display:flex;"><span>        gmail<span style="color:#f92672">.</span>sendmail(sender_email, receiver_email, msg<span style="color:#f92672">.</span>as_string())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">send_email_via_ses</span>():
+</span></span><span style="display:flex;"><span>    ses <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>client(
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;ses&#39;</span>,
+</span></span><span style="display:flex;"><span>        region_name<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;us-east-1&#39;</span>,
+</span></span><span style="display:flex;"><span>        endpoint_url<span style="color:#f92672">=</span>LOCALSTACK_ENDPOINT,
+</span></span><span style="display:flex;"><span>        aws_access_key_id<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;fake-key&#39;</span>,
+</span></span><span style="display:flex;"><span>        aws_secret_access_key<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;fake-key&#39;</span>
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    sm_client <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>client(<span style="color:#e6db74">&#39;secretsmanager&#39;</span>)
+</span></span><span style="display:flex;"><span>    secret_content <span style="color:#f92672">=</span> json<span style="color:#f92672">.</span>loads(
+</span></span><span style="display:flex;"><span>        sm_client<span style="color:#f92672">.</span>get_secret_value(SecretId<span style="color:#f92672">=</span>os<span style="color:#f92672">.</span>environ[<span style="color:#e6db74">&#39;SM_SECRET_NAME&#39;</span>])
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    sender_email <span style="color:#f92672">=</span> secret_content[<span style="color:#e6db74">&#39;sender_email&#39;</span>]
+</span></span><span style="display:flex;"><span>    receiver_email <span style="color:#f92672">=</span> secret_content[<span style="color:#e6db74">&#39;receiver_email&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ses<span style="color:#f92672">.</span>send_email(
+</span></span><span style="display:flex;"><span>        Source<span style="color:#f92672">=</span>sender_email,
+</span></span><span style="display:flex;"><span>        Destination<span style="color:#f92672">=</span>{
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;ToAddresses&#39;</span>: [receiver_email]
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        Message<span style="color:#f92672">=</span>{
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;Subject&#39;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;Data&#39;</span>: <span style="color:#e6db74">f</span><span style="color:#e6db74">&#39;Product has been removed&#39;</span>
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;Body&#39;</span>: {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;Text&#39;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#39;Data&#39;</span>: <span style="color:#e6db74">&#39;Hello World!&#39;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    )
+</span></span></code></pre></div><p>With all this, the list of services I had planned would be implemented. Perhaps in the future I&rsquo;ll expand the project by adding a CI pipeline and a Helm chart with ArgoCD. For now, I&rsquo;ll leave it here.</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

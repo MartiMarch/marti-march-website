@@ -6,8 +6,15 @@
     <description>Recent content on Martí March</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 06 May 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Jun 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Lerning AWS with LocalStack</title>
+      <link>//localhost:1313/en/posts/learninng-aws-with-localstack/</link>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/en/posts/learninng-aws-with-localstack/</guid>
+      <description>&lt;h3 id=&#34;introduction&#34;&gt;Introduction&lt;/h3&gt;&#xA;&lt;p&gt;I have worked with various cloud providers, such as GCP, IBM and Azure. Yes, they are some of the most used, but I lack experience with the most popular one: AWS. Since I&amp;rsquo;ve used it superficially, I wanted to practice with some of the available&#xA;services, although I no longer have any free credits left in my account&amp;hellip; I began researching until I came across LocalStack, a project that emulates various AWS services in a container. So, that&amp;rsquo;s exactly what I&amp;rsquo;ll cover in this post: how&#xA;I set up a small environment using different AWS services through LocalStack, Terraform and Python.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>How my on premise private cloud was built</title>
       <link>//localhost:1313/en/posts/how-my-on-premise-private-cloud-was-built/</link>

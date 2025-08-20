@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="es">
   <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
-    <title>Aprendiendo AWS con localstack // Marti March</title>
+    <title>Aprendiendo AWS con LocalStack // Marti March</title>
     <link rel="shortcut icon" href="/favicon.ico" />
     <meta charset="utf-8" />
-    <meta name="generator" content="Hugo 0.147.9">
+    <meta name="generator" content="Hugo 0.148.2">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="author" content="Marti March" />
     <meta name="description" content="" />
@@ -14,12 +14,12 @@
     
     
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Aprendiendo AWS con localstack">
+  <meta name="twitter:title" content="Aprendiendo AWS con LocalStack">
   <meta name="twitter:description" content="Introducción He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles, aunque no me quedan más créditos gratis en la cuenta… Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo, como he creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.">
 
     <meta property="og:url" content="//localhost:1313/es/es/articulos/learninng-aws-with-localstack/">
   <meta property="og:site_name" content="Marti March">
-  <meta property="og:title" content="Aprendiendo AWS con localstack">
+  <meta property="og:title" content="Aprendiendo AWS con LocalStack">
   <meta property="og:description" content="Introducción He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles, aunque no me quedan más créditos gratis en la cuenta… Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo, como he creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.">
   <meta property="og:locale" content="en_US">
   <meta property="og:type" content="article">
@@ -73,7 +73,7 @@
       
   <article class="post">
     <header class="post-header">
-      <h1 class ="post-title">Aprendiendo AWS con localstack</h1>
+      <h1 class ="post-title">Aprendiendo AWS con LocalStack</h1>
       <div class="post-meta">
         <div>
           <svg class="icon icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>calendar</title><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
@@ -97,10 +97,12 @@
     </header>
     <div class="post-content">
       <h3 id="introducción">Introducción</h3>
-<p>He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles, aunque
-no me quedan más créditos gratis en la cuenta&hellip; Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo, como he
-creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.</p>
+<p>He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles,
+aunque no me quedan más créditos gratis en la cuenta&hellip; Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo,
+como he creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.</p>
 <ul>
+<li><a href="/es/articulos/learninng-aws-with-localstack/#objetivo">Objetivo</a></li>
+<li><a href="/es/articulos/learninng-aws-with-localstack/#instalaci%c3%b3n-de-localstack">Instalación de LocalStack</a></li>
 <li><a href="/es/articulos/learninng-aws-with-localstack/#tags">Tags</a></li>
 <li><a href="/es/articulos/learninng-aws-with-localstack/#dynamodb">DynamoDB</a></li>
 <li><a href="/es/articulos/learninng-aws-with-localstack/#terraform">Terraform</a></li>
@@ -108,7 +110,7 @@ creado un pequeño escenario en el que voy usando diferentes servicios de AWS a 
 <li><a href="/es/articulos/learninng-aws-with-localstack/#dynamodb-streams-secret-manager-y-ses">DynamoDB Streams, Secret Manager y SES</a></li>
 </ul>
 <h3 id="objetivo">Objetivo</h3>
-<p>Como quiero usar varios servicios, he desarrollado un servicio en FastApi que se conecta a DynamoDB para crear, listar y eliminar la entidad Producto. Después,  he habilitado una función Lambda que envía un correo usando SES y cuyo trigger es
+<p>Como quiero usar varios servicios, he desarrollado un servicio en FastApi que se conecta a DynamoDB para crear, listar y eliminar la entidad Producto. Después, he habilitado una función Lambda que envía un correo usando SES y cuyo trigger es
 DynamoDB Streams. Hay <a href="https://docs.localstack.cloud/references/coverage/">una lista</a> con los servicios mockeados.</p>
 <style>
     .img-center {
@@ -123,9 +125,7 @@ DynamoDB Streams. Hay <a href="https://docs.localstack.cloud/references/coverage
 <div class="img-center">
     
     
-        
-    
-    <img src="/marti-march-website/posts/learninng-aws-with-localstack/intro.png">
+    <img src="/posts/learninng-aws-with-localstack/intro.png">
 </div>
 <p>Todo el código generado está almacenado en un <a href="https://github.com/MartiMarch/fake-aws.git">repo público</a>.</p>
 <h3 id="instalación-de-localstack">Instalación de LocalStack</h3>
@@ -338,7 +338,7 @@ básica para desarrollar rápidamente y centrarme en los servicios, dejando de l
     ├── __init__.py
     ├── ProductDTO.py
     ├── ProductMapper.py
-    └─── Product.py
+    └── Product.py
 </code></pre><p>Clase adaptador de DynamoDB con las operaciones para crear, eliminar y listar la entidad Product.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> fakeaws.models.ProductMapper <span style="color:#f92672">import</span> ProductMapper
 </span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> fakeaws.models.ProductDTO <span style="color:#f92672">import</span> ProductDTO
@@ -1073,7 +1073,7 @@ gestionar la contraseña del correo que envía el correo, inyectado el valor con
 </span></span><span style="display:flex;"><span>            }
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    )
-</span></span></code></pre></div><p>Con todo esto, ya estaría implementada la lista de servicios que tenía planificados. Tal vez en el futuro expando el proyecto agregando una pipeline para el CI y un chart de Helm con ArgoCD, de momento lo ejo aquí.</p>
+</span></span></code></pre></div><p>Con todo esto, ya estaría implementada la lista de servicios que tenía planificados. Tal vez en el futuro expando el proyecto agregando una pipeline para el CI y un chart de Helm con ArgoCD, de momento lo dejo aquí.</p>
 
     </div>
     <div class="post-footer">

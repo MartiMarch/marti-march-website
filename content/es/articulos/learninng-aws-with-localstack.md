@@ -1,5 +1,5 @@
 +++
-title = "Aprendiendo AWS con localstack"
+title = "Aprendiendo AWS con LocalStack"
 tags = ["terraform", "aws", "cloud", "devops", "localstack", "fastapi", "python"]
 date = "2025-06-24"
 lang = "es"
@@ -7,10 +7,12 @@ lang = "es"
 
 ### Introducción
 
-He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles, aunque
-no me quedan más créditos gratis en la cuenta... Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo, como he
-creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.
+He trabajado con varios proveedores cloud, como por ejemplo GCP, IBM o Azure. Sí, son algunos de los más usados, pero falta el más popular, AWS. Como lo he utilizado muy superficialmente quería practicar sobre algunos de los servicios disponibles,
+aunque no me quedan más créditos gratis en la cuenta... Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo,
+como he creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.
 
+- [Objetivo](#objetivo)
+- [Instalación de LocalStack](#instalación-de-localstack)
 - [Tags](#tags)
 - [DynamoDB](#dynamodb)
 - [Terraform](#terraform)
@@ -19,7 +21,7 @@ creado un pequeño escenario en el que voy usando diferentes servicios de AWS a 
 
 ### Objetivo
 
-Como quiero usar varios servicios, he desarrollado un servicio en FastApi que se conecta a DynamoDB para crear, listar y eliminar la entidad Producto. Después,  he habilitado una función Lambda que envía un correo usando SES y cuyo trigger es 
+Como quiero usar varios servicios, he desarrollado un servicio en FastApi que se conecta a DynamoDB para crear, listar y eliminar la entidad Producto. Después, he habilitado una función Lambda que envía un correo usando SES y cuyo trigger es 
 DynamoDB Streams. Hay [una lista](https://docs.localstack.cloud/references/coverage/) con los servicios mockeados.
 
 {{< images/centered-image src="/posts/learninng-aws-with-localstack/intro.png" >}}
@@ -82,6 +84,7 @@ awsl resource-groups list-groups
 ```
 
 Para asociar cada recurso hay que usar el siguiente tag en el momento de su creación:
+
 ```bash
 --tags '[
     {Key=project,Value=fwk-fake},
@@ -265,7 +268,7 @@ La estructura del proyecto es la siguiente:
     ├── __init__.py
     ├── ProductDTO.py
     ├── ProductMapper.py
-    └─── Product.py
+    └── Product.py
 ```
 
 Clase adaptador de DynamoDB con las operaciones para crear, eliminar y listar la entidad Product.
@@ -490,7 +493,7 @@ curl \
 
 ### Terraform
 
-Voy a ir agregando más funcionalidades al micro, además de crear otros servicios con Localstack. El problema es que orquestar la infraestructura desde el CLI de AWS directamente puede llegar a ser engorroso cuando hay que crear varios entornos, por eso,
+Voy a ir agregando más funcionalidades al micro, además de crear otros servicios con LocalStack. El problema es que orquestar la infraestructura desde el CLI de AWS directamente puede llegar a ser engorroso cuando hay que crear varios entornos, por eso,
 hay que crear un proyecto de Terraform y definir todo como IAC.
 
 Los directorios se han estructurado para diferenciar la infraestructura en los entornos de PRE y PRO, con un módulo por servicio de AWS. Hay unas variables base, para mantener el mismo nombre de proyecto y el endpoint de Localstack al invocar a los módulos,
@@ -520,7 +523,7 @@ además de las variables de entorno de PRE y PRO.
     └── pro.tfvars
 ```
 
-Para trascribir lo que se ha desplegado previamente a Terraform, se ha creado los módulos de DynamoDB y group.
+Para transcribir lo que se ha desplegado previamente a Terraform, se ha creado los módulos de DynamoDB y group.
 
 ```terraform
 # Módulo de groups
@@ -809,7 +812,7 @@ resource "aws_iam_role_policy_attachment" "this" {
 }
 ```
 
-Cualquier función lambda se puede invocar desde el CLI de AWS. Eso es lo que hice pero, no para de ver un log en el pod de Localstack.
+Cualquier función lambda se puede invocar desde el CLI de AWS. Eso es lo que hice, pero solo vi un log de error en el pod de Localstack.
 
 ```bash
  Error: waiting for Lambda Function (fake-aws-pre-lambda-function) create: unexpected state 'Failed', wanted target 'Active'. last error: InternalError: Error while creating lambda: Docker not available
@@ -912,7 +915,7 @@ La última pieza por implementar es el envío del correo desde la lambda cuando 
 gestionar la contraseña del correo que envía el correo, inyectado el valor con una variable de entorno al ejecutar Terraform y recuperando desde la función lambda el secreto con la librería boto3.
 
 ```terraform
-# Módulo de secret maanger
+# Módulo de secret manager
 # terraform/modules/secret_manager
 
 variable "project" {
