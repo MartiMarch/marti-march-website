@@ -101,13 +101,13 @@
 aunque no me quedan más créditos gratis en la cuenta&hellip; Me puse a indagar un poco hasta que encontré LocalStack, un proyecto que simula parcialmente los servicios de AWS en un contenedor. Así que eso es justo lo que voy a comentar en este artículo,
 como he creado un pequeño escenario en el que voy usando diferentes servicios de AWS a través de LocalStack, Terraform y Python.</p>
 <ul>
-<li><a href="/es/articulos/learninng-aws-with-localstack/#objetivo">Objetivo</a></li>
-<li><a href="/es/articulos/learninng-aws-with-localstack/#instalaci%c3%b3n-de-localstack">Instalación de LocalStack</a></li>
-<li><a href="/es/articulos/learninng-aws-with-localstack/#tags">Tags</a></li>
-<li><a href="/es/articulos/learninng-aws-with-localstack/#dynamodb">DynamoDB</a></li>
-<li><a href="/es/articulos/learninng-aws-with-localstack/#terraform">Terraform</a></li>
-<li><a href="/es/articulos/learninng-aws-with-localstack/#lambda-y-s3">Lambda y S3</a></li>
-<li><a href="/es/articulos/learninng-aws-with-localstack/#dynamodb-streams-secret-manager-y-ses">DynamoDB Streams, Secret Manager y SES</a></li>
+<li><a href="/es/es/articulos/learninng-aws-with-localstack/#objetivo">Objetivo</a></li>
+<li><a href="/es/es/articulos/learninng-aws-with-localstack/#instalaci%c3%b3n-de-localstack">Instalación de LocalStack</a></li>
+<li><a href="/es/es/articulos/learninng-aws-with-localstack/#tags">Tags</a></li>
+<li><a href="/es/es/articulos/learninng-aws-with-localstack/#dynamodb">DynamoDB</a></li>
+<li><a href="/es/es/articulos/learninng-aws-with-localstack/#terraform">Terraform</a></li>
+<li><a href="/es/es/articulos/learninng-aws-with-localstack/#lambda-y-s3">Lambda y S3</a></li>
+<li><a href="/es/es/articulos/learninng-aws-with-localstack/#dynamodb-streams-secret-manager-y-ses">DynamoDB Streams, Secret Manager y SES</a></li>
 </ul>
 <h3 id="objetivo">Objetivo</h3>
 <p>Como quiero usar varios servicios, he desarrollado un servicio en FastApi que se conecta a DynamoDB para crear, listar y eliminar la entidad Producto. Después, he habilitado una función Lambda que envía un correo usando SES y cuyo trigger es
@@ -125,7 +125,9 @@ DynamoDB Streams. Hay <a href="https://docs.localstack.cloud/references/coverage
 <div class="img-center">
     
     
-    <img src="/posts/learninng-aws-with-localstack/intro.png">
+        
+    
+    <img src="/marti-march-website/posts/learninng-aws-with-localstack/intro.png">
 </div>
 <p>Todo el código generado está almacenado en un <a href="https://github.com/MartiMarch/fake-aws.git">repo público</a>.</p>
 <h3 id="instalación-de-localstack">Instalación de LocalStack</h3>

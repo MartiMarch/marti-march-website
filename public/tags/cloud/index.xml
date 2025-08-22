@@ -9,7 +9,7 @@
     <lastBuildDate>Tue, 24 Jun 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/tags/cloud/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Lerning AWS with LocalStack</title>
+      <title>Learning AWS with LocalStack</title>
       <link>//localhost:1313/en/posts/learninng-aws-with-localstack/</link>
       <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/en/posts/learninng-aws-with-localstack/</guid>

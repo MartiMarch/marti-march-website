@@ -645,7 +645,9 @@ subnet 192.168.1.0/24 remains as the domestic network, and 192.168.2.0/24 as clu
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/network-topology-1.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/network-topology-1.png">
 </div>
 <p>To build a HA kubernetes cluster, workers must communicate with a control plane, but, if it goes down, another must take over as the leader (<em>RAFT algorithm</em>).
 To enable that, a virtual IP address is needed. It is commonly implemented combining HaProxy with KeepAlived.</p>
@@ -666,7 +668,9 @@ To enable that, a virtual IP address is needed. It is commonly implemented combi
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_1.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_1.png">
 </div>
 <ol start="2">
 <li>The virtual IP is associated with the master node in question and the worker nodes attack that control plane</li>
@@ -684,7 +688,9 @@ To enable that, a virtual IP address is needed. It is commonly implemented combi
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_2.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_2.png">
 </div>
 <ol start="3">
 <li>A control plane goes down</li>
@@ -702,7 +708,9 @@ To enable that, a virtual IP address is needed. It is commonly implemented combi
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_3.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_3.png">
 </div>
 <ol start="4">
 <li>KeepAlived negotiates the leader role again with the remaining master nodes and associates the virtual IP with it, the worker nodes attack that control plane</li>
@@ -720,7 +728,9 @@ To enable that, a virtual IP address is needed. It is commonly implemented combi
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_4.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_4.png">
 </div>
 <p>HaProxy and KeepAlived must be installed on each control plane. Installation steps are the same, the only difference is the configuration files of haproxy and keepalived.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apt -y update
@@ -921,7 +931,9 @@ worker node. All of this is achieved using Longhorn, steps to install it:</p>
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/longhorn_1.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/longhorn_1.png">
 </div>
 <ol start="4">
 <li>Attach Longhorn storage class to PVC</li>
@@ -1032,7 +1044,9 @@ might be to use the worker nodes themselves as load balancers, leveraging OpenEL
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/openelb_1.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/openelb_1.png">
 </div>
 <p>The last step to achieve a solid solution is to secure access to the Ingress using a custom CA. It can be done with cert-manager, a built-in Kubernetes service that orchestrates certificates.</p>
 <p>It requires creating a key to sing certificates with the CA.</p>

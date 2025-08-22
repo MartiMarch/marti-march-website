@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Security on Marti March</title>
+    <link>//localhost:1313/es/tags/security/</link>
+    <description>Recent content in Security on Marti March</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 20 Aug 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/es/tags/security/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>mTLS para agentes de Kubernetes</title>
+      <link>//localhost:1313/es/articulos/mtls-to-k8s-agents/</link>
+      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/articulos/mtls-to-k8s-agents/</guid>
+      <description>&lt;h1 id=&#34;introducción&#34;&gt;Introducción&lt;/h1&gt;&#xA;&lt;p&gt;Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. La idea es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando&#xA;cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS, craso error. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo aún mayor&#xA;que directamente implementar mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu&#xA;escenario se ajusta a lo que voy a describir en este artículo, te recomiendo implementar mTLS directamente.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>mTLS para agentes de Kubernetes</title>
+      <link>//localhost:1313/es/es/articulos/mtls-to-k8s-agents/</link>
+      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/es/articulos/mtls-to-k8s-agents/</guid>
+      <description>&lt;h1 id=&#34;introducción&#34;&gt;Introducción&lt;/h1&gt;&#xA;&lt;p&gt;Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. La idea es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando&#xA;cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS, craso error. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo aún mayor&#xA;que directamente implementar mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu&#xA;escenario se ajusta a lo que voy a describir en este artículo, te recomiendo implementar mTLS directamente.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

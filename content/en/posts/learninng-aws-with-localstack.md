@@ -1,5 +1,5 @@
 +++
-title = "Lerning AWS with LocalStack"
+title = "Learning AWS with LocalStack"
 tags = ["terraform", "aws", "cloud", "devops", "localstack", "fastapi", "python"]
 date = "2025-06-24"
 lang = "en"

@@ -6,20 +6,62 @@
     <description>Recent content in Tags on Marti March</description>
     <generator>Hugo</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 24 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 20 Aug 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/es/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Aws</title>
-      <link>//localhost:1313/es/tags/aws/</link>
-      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/es/tags/aws/</guid>
+      <title>Agent</title>
+      <link>//localhost:1313/es/tags/agent/</link>
+      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/agent/</guid>
       <description></description>
     </item>
     <item>
       <title>Cloud</title>
       <link>//localhost:1313/es/tags/cloud/</link>
-      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/es/tags/cloud/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Go</title>
+      <link>//localhost:1313/es/tags/go/</link>
+      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/go/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>K8s</title>
+      <link>//localhost:1313/es/tags/k8s/</link>
+      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/k8s/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Kubernetes</title>
+      <link>//localhost:1313/es/tags/kubernetes/</link>
+      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/kubernetes/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Security</title>
+      <link>//localhost:1313/es/tags/security/</link>
+      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/security/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Spring Boot</title>
+      <link>//localhost:1313/es/tags/spring-boot/</link>
+      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/spring-boot/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Aws</title>
+      <link>//localhost:1313/es/tags/aws/</link>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/tags/aws/</guid>
       <description></description>
     </item>
     <item>
@@ -55,13 +97,6 @@
       <link>//localhost:1313/es/tags/terraform/</link>
       <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/es/tags/terraform/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>K8s</title>
-      <link>//localhost:1313/es/tags/k8s/</link>
-      <pubDate>Tue, 06 May 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/es/tags/k8s/</guid>
       <description></description>
     </item>
     <item>

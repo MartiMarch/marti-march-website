@@ -103,17 +103,17 @@ Capítulo 1: El problema Capítulo 2: La solución Red energética Arquitectura 
 <p>En este artículo voy a tratar de explicar cómo y por qué decidí crear un cloud privado sobre una infraestructura on-premise, usando los ordenadores más baratos posibles.</p>
 <p>Si también tienes en mente emplear un cloud privado on-premise, has de saber que tiene cierto grado de complejidad y se requieren ciertos conocimientos previos de red, Kubernetes y Linux.</p>
 <ul>
-<li><a href="/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-1-el-problema">Capítulo 1: El problema</a></li>
-<li><a href="/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-2-la-soluci%c3%b3n">Capítulo 2: La solución</a>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-1-el-problema">Capítulo 1: El problema</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-2-la-soluci%c3%b3n">Capítulo 2: La solución</a>
 <ul>
-<li><a href="/es/articulos/mi-cloud-on-premise/#red-energ%c3%a9tica">Red energética</a></li>
-<li><a href="/es/articulos/mi-cloud-on-premise/#arquitectura-de-red">Arquitectura de red</a></li>
-<li><a href="/es/articulos/mi-cloud-on-premise/#desplieuge-del-cluster-de-k8s">Despliegue del cluster de k8s</a></li>
-<li><a href="/es/articulos/mi-cloud-on-premise/#persistencia-de-la-informaci%c3%b3n">Persistencia de la información</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#red-energ%c3%a9tica">Red energética</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#arquitectura-de-red">Arquitectura de red</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#desplieuge-del-cluster-de-k8s">Despliegue del cluster de k8s</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#persistencia-de-la-informaci%c3%b3n">Persistencia de la información</a></li>
 </ul>
 </li>
-<li><a href="/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-3-la-soluci%c3%b3n-se-transforma-en-un-problema">Capítulo 3: La solución se transforma en un problema</a></li>
-<li><a href="/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-4-conclusiones">Capítulo 4: Conclusiones</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-3-la-soluci%c3%b3n-se-transforma-en-un-problema">Capítulo 3: La solución se transforma en un problema</a></li>
+<li><a href="/es/es/articulos/mi-cloud-on-premise/#cap%c3%adtulo-4-conclusiones">Capítulo 4: Conclusiones</a></li>
 </ul>
 <h1 id="capítulo-1-el-problema">Capítulo 1: El problema</h1>
 <p>Lo que más me gusta de trabajar en informática es que tengo la posibilidad de construir muchas cosas con un ordenador. La idea de generar ingresos extra siempre ronda por mi cabeza. Pero solo soy una persona, no una compañía. Necesito optimizar
@@ -635,7 +635,9 @@ $$
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/network-topology-1.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/network-topology-1.png">
 </div>
 <p>Para crear un cluster de Kubernetes en HA no basta tan solo con tener varios nodos worker, también se necesita contar con varios control plane, asociando estos últimos a una IP virtual. El funcionamiento es simple, si un nodo de tipo control plane
 se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para hacer funcionar algo así combiné dos herramientas ampliamente usadas, HaProxy y KeepAlived.</p>
@@ -656,7 +658,9 @@ se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para 
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_1.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_1.png">
 </div>
 <ol start="2">
 <li>La IP virtual se asocia con el control plane líder del punto anterior. A partir de este momento, el nodo en custión es el encargado de comunicarse con los nodos worker.</li>
@@ -674,7 +678,9 @@ se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para 
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_2.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_2.png">
 </div>
 <ol start="3">
 <li>El control plane líder deja de dar servicio</li>
@@ -692,7 +698,9 @@ se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para 
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_3.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_3.png">
 </div>
 <ol start="4">
 <li>Los control plane que siguen funcionando empiezan a negociar quien será el nuevo líder. Una vez establecido, KeepAlived asociará la IP virtual al nuevo nodo líder.</li>
@@ -710,7 +718,9 @@ se cae, otro tomará su lugar asumiendo el rol de líder (algoritmo RAFT). Para 
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_4.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/keepalive-haproxy_4.png">
 </div>
 <p>Tanto HaProxy como KeepAlived se han de instalar en cada control plane. Los pasos para su instalación son los mismos, lo único que difiere son los archivos de configuración:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apt -y update
@@ -908,7 +918,9 @@ mientras se clona la copia de datos que sigue estando sana. Por eso se ha añadi
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/longhorn_1.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/longhorn_1.png">
 </div>
 <ol start="4">
 <li>Definición del manifiesto del PVC</li>
@@ -1010,7 +1022,9 @@ cómo funciona:</p>
 <div class="img-center">
     
     
-    <img src="/posts/how-my-on-premise-private-cloud-was-built/openelb_1.png">
+        
+    
+    <img src="/marti-march-website/posts/how-my-on-premise-private-cloud-was-built/openelb_1.png">
 </div>
 <p>El último paso para tener una solución sólida consiste en asegurar el acceso al Ingress mediante una autoridad certificadora (CA). Se puede hacer con cert-manager, un servicio integrado en Kubernetes que gestiona automáticamente los certificados.
 Primero se tiene que crear una clave con la que firmar los certificados usando la CA.</p>

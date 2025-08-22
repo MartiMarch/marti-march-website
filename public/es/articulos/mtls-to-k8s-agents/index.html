@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="es">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <title>mTLS para agentes de Kubernetes // Marti March</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.148.2">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Marti March" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.d024432de022f80a70ac780c7b5c1965b59484c9412974c923ed27741792fb9a.css" />
+    
+
+    
+    
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="mTLS para agentes de Kubernetes">
+  <meta name="twitter:description" content="Introducción Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. La idea es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS, craso error. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo aún mayor que directamente implementar mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu escenario se ajusta a lo que voy a describir en este artículo, te recomiendo implementar mTLS directamente.">
+
+    <meta property="og:url" content="//localhost:1313/es/articulos/mtls-to-k8s-agents/">
+  <meta property="og:site_name" content="Marti March">
+  <meta property="og:title" content="mTLS para agentes de Kubernetes">
+  <meta property="og:description" content="Introducción Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. La idea es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS, craso error. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo aún mayor que directamente implementar mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu escenario se ajusta a lo que voy a describir en este artículo, te recomiendo implementar mTLS directamente.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="articulos">
+    <meta property="article:published_time" content="2025-08-20T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-08-20T00:00:00+00:00">
+    <meta property="article:tag" content="K8s">
+    <meta property="article:tag" content="Kubernetes">
+    <meta property="article:tag" content="Spring Boot">
+    <meta property="article:tag" content="Agent">
+    <meta property="article:tag" content="Cloud">
+    <meta property="article:tag" content="Go">
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="/"><img class="app-header-avatar" src="/user-photo.jpeg" alt="Marti March" /></a>
+      <span class="app-header-title">Marti March</span>
+      <hr class="menu-hr">
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/es/sobre-mi">Sobre mí</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/es/articulos/">Últimos artículos</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/es/intereses">Intereses</a>
+      </nav>
+      <hr class="menu-hr">
+      <p> </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/MartiMarch" target="_blank" rel="noreferrer noopener me">
+            <svg class="icon icon-brand-github" viewBox="0 0 24 24" fill="currentColor"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/mart%C3%AD-march" target="_blank" rel="noreferrer noopener me">
+            <svg class="icon icon-brand-linkedin" viewBox="0 0 24 24" fill="currentColor"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        
+      </div>
+      <hr class="menu-hr">
+      <div class="lang-switcher">
+        <a href="/marti-march-website/es/articulos">ES</a>
+        <span class="span-languages">|</span>
+        <a href="/marti-march-website/en/posts">EN</a>
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">mTLS para agentes de Kubernetes</h1>
+      <div class="post-meta">
+        <div>
+          <svg class="icon icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>calendar</title><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Aug 20, 2025
+        </div>
+        <div>
+          <svg class="icon icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>clock</title><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          10 min read
+        </div>
+        <div>
+          <svg class="icon icon-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>tag</title><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+              <a class="tag" href="/es/tags/k8s/">K8s</a>
+              <a class="tag" href="/es/tags/kubernetes/">Kubernetes</a>
+              <a class="tag" href="/es/tags/spring-boot/">Spring Boot</a>
+              <a class="tag" href="/es/tags/agent/">Agent</a>
+              <a class="tag" href="/es/tags/cloud/">Cloud</a>
+              <a class="tag" href="/es/tags/go/">Go</a>
+              <a class="tag" href="/es/tags/security/">Security</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h1 id="introducción">Introducción</h1>
+<p>Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. La idea es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando
+cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS, craso error. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo aún mayor
+que directamente implementar mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu
+escenario se ajusta a lo que voy a describir en este artículo, te recomiendo implementar mTLS directamente.</p>
+<ul>
+<li><a href="/es/es/articulos/mtls-to-k8s-agents/#el-problema">El problema</a></li>
+<li><a href="/es/es/articulos/mtls-to-k8s-agents/#mtls">mTLS</a></li>
+<li><a href="/es/es/articulos/mtls-to-k8s-agents/#mtls-en-kubernetes">mTLS en Kubernetes</a></li>
+</ul>
+<h1 id="el-problema">El problema</h1>
+<p>En un extremo está Spring Boot como servidor gestionando la información del agente y, en el otro, los agentes de Go de k8s que pueden conectarse/desconectarse. ¿Cómo puede saber el servidor que el agente es realmente quien dice ser y que no se trata
+de un ataque de MiTM? ¿Cómo puede verificar el agente la autenticidad del servidor? En mutual TLS (mTLS) ambos extremos del canal deben presentar un certificado válido. Esto permite que tanto el servidor como el cliente verifiquen la identidad del otro.</p>
+<p>Cuando implementas mTLS:</p>
+<ul>
+<li>El servidor no acepta conexiones de clientes que no presenten un certificado firmado por una autoridad certificadora) confiable.</li>
+<li>El agente verifica que el servidor también tenga un certificado válido y firmado por la misma CA (u otra CA confiable).</li>
+<li>La comunicación entre ambos se cifra, y ambos extremos pueden estar seguros de con quién están hablando.</li>
+</ul>
+<p>Para configurar mTLS se necesita una CA propia o firmada por una entidad externa y un certificado por cada extremo que se quiera proteger con mTLS. Aunque, antes de pasar a la creación de certificados, hay que tener en cuenta que dentro del certificado
+X.509 hay varios campos que definen el comportamiento esperado de cada nexo.</p>
+<ul>
+<li><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">Key Usage</span> extensión que define lo que puede hacer la clave pública contenida en el certificado
+<ul>
+<li><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">Digital Signature</span> Permite firmar digitalmente datos</li>
+<li><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">Key Encipherment</span> Sirve para cifrado de claves durante el handshake TLS</li>
+</ul>
+</li>
+<li><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">Extended Key Usage (EKU)</span> Lista de &ldquo;propósitos extendidos&rdquo; que limitan para qué se puede usar el certificado
+<ul>
+<li><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">TLS Web Server Authentication</span> Indica que el certificado puede ser usado por un servidor TLS (por ejemplo, un servidor HTTPS o una API de Spring Boot).</li>
+<li><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">TLS Web Client Authentication</span> Indica que el certificado puede ser usado por un cliente TLS (por ejemplo, un agente en Go que inicia conexiones).</li>
+</ul>
+</li>
+</ul>
+<style>
+    .warning-box {
+        border-left: 4px solid #f5a623;
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 1em;
+        border-radius: 6px;
+        margin: 1em 0;
+        display: flex;
+        align-items: flex-start;
+        font-size: 0.95em;
+    }
+
+    .warning-box-icon {
+        font-size: 1.5em;
+        margin-right: 0.75em;
+        line-height: 1;
+    }
+
+    .warning-box-content {
+        flex: 1;
+    }
+</style>
+
+<div class="warning-box">
+    <div class="warning-box-icon">⚠️</div>
+    <div class="warning-box-content">
+        
+Hay muchos más campos. Para el caso de mTLS los citados son los más importantes
+
+    </div>
+</div>
+<h1 id="mtls">mTLS</h1>
+<h4 id="creación-de-la-ca">Creación de la CA</h4>
+<p>Hay que generar la clave y el certificado de la CA para poder firmar los certificados del servidor y el agente.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl genrsa -out ca.key <span style="color:#ae81ff">4096</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>openssl req -x509 -new -nodes <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -key ca.key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -sha256 -days <span style="color:#ae81ff">3650</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -out ca.crt
+</span></span></code></pre></div><h4 id="certificado-del-servidor">Certificado del servidor</h4>
+<ol>
+<li>Se genera una clave privada.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl genrsa -out server.key <span style="color:#ae81ff">2048</span>
+</span></span></code></pre></div><ol start="2">
+<li>Se crea una solicitud de firma (archivo *.csr). El propósito es pedirle a una CA que firme y genere un certificado digital auténtico basado en esa información.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl req -new -key server.key -out server.csr
+</span></span></code></pre></div><ol start="3">
+<li>Se configura un archivo de extensiones server.ext para definir las capacidades del certificado considerando los campos del certificado X.509 que se ha comentado previamente.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>authorityKeyIdentifier=keyid,issuer             # vincula el certificado con la CA que lo firmó
+</span></span><span style="display:flex;"><span>basicConstraints=CA:FALSE                       # este certificado no es una CA
+</span></span><span style="display:flex;"><span>keyUsage = digitalSignature, keyEncipherment    # qué operaciones criptográficas se permiten
+</span></span><span style="display:flex;"><span>extendedKeyUsage = serverAuth                   # especifica el propósito del certificado
+</span></span><span style="display:flex;"><span>subjectAltName = @alt_names                     # agrega el campo subjectAltName requerido por los
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[alt_names]                                     # define los valores para el campo subjectAltName
+</span></span><span style="display:flex;"><span>DNS.1 = localhost                               # indica que el certificado es válido para el dominio localhost
+</span></span></code></pre></div><ol start="4">
+<li>Se firma el certificado con la solicitud de firma, la CA, la clave privada del servidor y el archivo de extensiones.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl x509 -req <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -in server.csr <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -CA ca.crt -CAkey ca.key -CAcreateserial <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -out server.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -days <span style="color:#ae81ff">825</span> -sha256 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -extfile server.ext
+</span></span></code></pre></div><p>Se puede validar el contenido del certificado usando el siguiente comando:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl x509 -in server.crt -text -noout
+</span></span></code></pre></div><h3 id="mtls-en-spring-boot">mTLS en Spring Boot</h3>
+<p>Para configurar en proyecto de Spring Boot hay que crear contenedor de certificados, ya sea bien usando JKS o PKCS 12. En este caso concreto he utilizado este último. Hay que incluir en el contenedor tanto el server.crt/server.key como el ca.crt.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl pkcs12 -export <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -inkey server.key <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -in server.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -certfile ca.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -name server <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -out server.p12
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>keytool -importcert <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -file ca.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -alias ca <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -keystore truststore.p12 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -storetype PKCS12 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -storepass <span style="color:#ae81ff">123456</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -noprompt
+</span></span></code></pre></div><p>En el proceso de construcción de Gradle (o Maven si fuese el caso) hay que configurar la carga de los contenedores. He ubicado los archivos dentro de src/main/resources, te recomiendo modificar el .gitignore para que no suba los *.p12 al repositorio.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-gradle" data-lang="gradle"><span style="display:flex;"><span>processResources <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    from<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;src/main/resources&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        include <span style="color:#e6db74">&#34;server.p12&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>tasks<span style="color:#f92672">.</span><span style="color:#a6e22e">processResources</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    duplicatesStrategy <span style="color:#f92672">=</span> DuplicatesStrategy<span style="color:#f92672">.</span><span style="color:#a6e22e">EXCLUDE</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>También hay que configurar el application.properties.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#a6e22e">server.port</span><span style="color:#f92672">=</span><span style="color:#e6db74">8080</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server.ssl.enabled</span><span style="color:#f92672">=</span><span style="color:#e6db74">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server.ssl.key-store</span><span style="color:#f92672">=</span><span style="color:#e6db74">classpath:server.p12</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server.ssl.key-store-password</span><span style="color:#f92672">=</span><span style="color:#e6db74">${SERVER_SSL_KEY_STORE_PASSWORD}</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server.ssl.key-store-type</span><span style="color:#f92672">=</span><span style="color:#e6db74">PKCS12</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server.ssl.client-auth</span><span style="color:#f92672">=</span><span style="color:#e6db74">want</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server.ssl.trust-store</span><span style="color:#f92672">=</span><span style="color:#e6db74">classpath:truststore.p12</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server.ssl.trust-store-password</span><span style="color:#f92672">=</span><span style="color:#e6db74">${SERVER_SSL_TRUST_STORE_PASSWORD}</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server.ssl.trust-store-type</span><span style="color:#f92672">=</span><span style="color:#e6db74">PKCS12</span>
+</span></span></code></pre></div><p>El último paso consiste en crear una clase de configuración dentro de la hexagonal del proyecto donde se especifique que endpoints deben usar mTLS y que campos se quieren revisar del certificado.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">package</span> org.api.adapters.mtls;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.context.annotation.Bean;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.context.annotation.Configuration;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.security.config.annotation.web.builders.HttpSecurity;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.security.core.userdetails.User;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.security.core.userdetails.UserDetailsService;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.security.web.SecurityFilterChain;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.util.List;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EnableWebSecurity</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Mtls</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> SecurityFilterChain <span style="color:#a6e22e">filterChain</span>(HttpSecurity http) <span style="color:#66d9ef">throws</span> Exception {
+</span></span><span style="display:flex;"><span>        http
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">csrf</span>(csrf <span style="color:#f92672">-&gt;</span> csrf.<span style="color:#a6e22e">disable</span>())
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">authorizeHttpRequests</span>(auth <span style="color:#f92672">-&gt;</span> auth
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Solo se exige autenticación mTLS en los endpoints que empiezan con /agent/</span>
+</span></span><span style="display:flex;"><span>                .<span style="color:#a6e22e">requestMatchers</span>(<span style="color:#e6db74">&#34;/agent/**&#34;</span>).<span style="color:#a6e22e">authenticated</span>()
+</span></span><span style="display:flex;"><span>                .<span style="color:#a6e22e">anyRequest</span>().<span style="color:#a6e22e">permitAll</span>()
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">x509</span>(x509 <span style="color:#f92672">-&gt;</span> x509
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Extrae el nombre del cliente del campo CN del certificado</span>
+</span></span><span style="display:flex;"><span>                .<span style="color:#a6e22e">subjectPrincipalRegex</span>(<span style="color:#e6db74">&#34;CN=(.*?)(?:,|$)&#34;</span>)
+</span></span><span style="display:flex;"><span>                .<span style="color:#a6e22e">userDetailsService</span>(userDetailsService())
+</span></span><span style="display:flex;"><span>            );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> http.<span style="color:#a6e22e">build</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> UserDetailsService <span style="color:#a6e22e">userDetailsService</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Para propósitos de demo, aceptamos cualquier certificado cuyo CN esté presente</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> username <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">new</span> User(username, <span style="color:#e6db74">&#34;&#34;</span>, List.<span style="color:#a6e22e">of</span>());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">subjectPrincipalRegex</span> -&gt; Permite extraer el nombre del usuario del campo CN del certificado. Esto es lo que se usará como nombre de usuario en el sistema.</p>
+<p><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">userDetailsService</span> -&gt; En este ejemplo, cualquier cliente con un certificado válido será aceptado, siempre que su CN pueda extraerse. Para un entorno productivo, lo ideal sería validar ese username contra una
+base de datos o lista autorizada.</p>
+<p><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">.requestMatchers</span> -&gt; Se indica que solo los endpoints bajo /agent/** requerirán un certificado válido. El resto de endpoints queda sin autenticación mTLS.</p>
+<p>La lógica se puede complicar en función de los campos accesible del certificado x509. Por ejemplo, es posible agregar metadatos personalizados usando extensiones definidas por OID. Esto permitiría validar información adicional (como roles,
+entornos o IDs) directamente en la configuración de mTLS. Par ello, en el momento de creación del certificado, en la definición del archivo de extensión (server.ext), se puede agregar algo como esto:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>authorityKeyIdentifier=keyid,issuer
+</span></span><span style="display:flex;"><span>basicConstraints=CA:FALSE
+</span></span><span style="display:flex;"><span>keyUsage = digitalSignature, keyEncipherment
+</span></span><span style="display:flex;"><span>extendedKeyUsage = serverAuth
+</span></span><span style="display:flex;"><span>subjectAltName = @alt_names
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span># Extensiones personalizadas, agregadas al certificado 
+</span></span><span style="display:flex;"><span>1.2.3.4.5.6.7.8.1 = ASN1:UTF8String:fake-agent-k8s-name 
+</span></span><span style="display:flex;"><span>  # ASN1:UTF8String -&gt; Es el tipo de la varaible 
+</span></span><span style="display:flex;"><span>  # 1.2.3.4.5.6.7.8.1 -&gt; Números resevados para los campos opcionales
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[alt_names]
+</span></span><span style="display:flex;"><span>DNS.1 = localhost
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> UserDetailsService <span style="color:#a6e22e">userDetailsService</span>() {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> username <span style="color:#f92672">-&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Obtener certificado del contexto de seguridad</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> auth <span style="color:#f92672">=</span> org.<span style="color:#a6e22e">springframework</span>.<span style="color:#a6e22e">security</span>.<span style="color:#a6e22e">core</span>.<span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">SecurityContextHolder</span>
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">getContext</span>()
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">getAuthentication</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (auth <span style="color:#66d9ef">instanceof</span> org.<span style="color:#a6e22e">springframework</span>.<span style="color:#a6e22e">security</span>.<span style="color:#a6e22e">web</span>.<span style="color:#a6e22e">authentication</span>.<span style="color:#a6e22e">preauth</span>.<span style="color:#a6e22e">x509</span>.<span style="color:#a6e22e">X509AuthenticationToken</span> x509Auth) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> cert <span style="color:#f92672">=</span> (X509Certificate) x509Auth.<span style="color:#a6e22e">getCredentials</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Leer la extensión personalizada (OID)</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> value <span style="color:#f92672">=</span> cert.<span style="color:#a6e22e">getExtensionValue</span>(<span style="color:#e6db74">&#34;1.2.3.4.5.6.7.8.1&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (value <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span>) {
+</span></span><span style="display:flex;"><span>                String decoded <span style="color:#f92672">=</span> decodeExtension(value);
+</span></span><span style="display:flex;"><span>                System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;Extensión personalizada: &#34;</span> <span style="color:#f92672">+</span> decoded);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Puedes usar `decoded` para validar o tomar decisiones</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#e6db74">&#34;fake-agent-k8s-name &#34;</span>.<span style="color:#a6e22e">equals</span>(decoded)) {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> RuntimeException(<span style="color:#e6db74">&#34;Certificado no autorizado&#34;</span>);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> RuntimeException(<span style="color:#e6db74">&#34;Extensión no encontrada en el certificado&#34;</span>);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Si todo va bien, aceptamos al usuario</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> User(username, <span style="color:#e6db74">&#34;&#34;</span>, List.<span style="color:#a6e22e">of</span>());
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> String <span style="color:#a6e22e">decodeExtension</span>(<span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> extVal) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Extensiones X.509 tienen un primer byte de ASN.1 con la longitud, lo ignoramos</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> input <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> java.<span style="color:#a6e22e">io</span>.<span style="color:#a6e22e">ByteArrayInputStream</span>(extVal);
+</span></span><span style="display:flex;"><span>        input.<span style="color:#a6e22e">read</span>(); <span style="color:#75715e">// ignorar primer byte ASN.1 (tipo)</span>
+</span></span><span style="display:flex;"><span>        input.<span style="color:#a6e22e">read</span>(); <span style="color:#75715e">// ignorar longitud</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> bytes <span style="color:#f92672">=</span> input.<span style="color:#a6e22e">readAllBytes</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> String(bytes, java.<span style="color:#a6e22e">nio</span>.<span style="color:#a6e22e">charset</span>.<span style="color:#a6e22e">StandardCharsets</span>.<span style="color:#a6e22e">UTF_8</span>);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">catch</span> (Exception e) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> RuntimeException(<span style="color:#e6db74">&#34;Error al leer extensión del certificado&#34;</span>, e);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="certificados-de-los-agentes">Certificados de los agentes</h4>
+<p>La configuración del agente es casi igual que la del servidor, excepto por ciertos campos.</p>
+<ol>
+<li>Se genera la clave privada.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl genrsa -out agent.key <span style="color:#ae81ff">2048</span>
+</span></span></code></pre></div><ol start="2">
+<li>Se crea la solicitud de firma.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl req -new -key agent.key -out agent.csr
+</span></span></code></pre></div><ol start="3">
+<li>Se define el archivo de extensiones. En este caso concreto, el certificado del agente tiene que actuar tanto como cliente como servidor (clientAuth y serverAuth) ya que recibe llamadas desde el servidor.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl x509 -req <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -in agent.csr <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -CA ../ca/ca.crt -CAkey ../ca/ca.key -CAcreateserial <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -out agent.crt <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -days <span style="color:#ae81ff">825</span> -sha256 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -extfile agent.ext
+</span></span></code></pre></div><p>Al arrancar el agente llama a cierto endpoint del servidor para que este último registre la información en la base de datos, pasando el dominio, el puerto, el nombre, etc. El agente tiene que generar el cliente http con los certificados previamente
+configurados, protegiendo los endpoints de interés con mTLS.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">CreateRouter</span>(<span style="color:#a6e22e">port</span> <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">router</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">mux</span>.<span style="color:#a6e22e">NewRouter</span>()	
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">router</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/chunk&#34;</span>, <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">w</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ResponseWriter</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>) {
+</span></span><span style="display:flex;"><span>      <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">Write</span>([]byte(<span style="color:#e6db74">&#34;Chunk received&#34;</span>))
+</span></span><span style="display:flex;"><span>    }).<span style="color:#a6e22e">Methods</span>(<span style="color:#e6db74">&#34;POST&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Lee el certificado de la Autoridad Certificadora (CA) desde archivo</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">caCert</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ioutil</span>.<span style="color:#a6e22e">ReadFile</span>(<span style="color:#e6db74">&#34;resources/ca.crt&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;Error reading CA cert: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Crea un pool (conjunto) de certificados raíz de confianza</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">caCertPool</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">x509</span>.<span style="color:#a6e22e">NewCertPool</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">caCertPool</span>.<span style="color:#a6e22e">AppendCertsFromPEM</span>(<span style="color:#a6e22e">caCert</span>); !<span style="color:#a6e22e">ok</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#e6db74">&#34;Failed to append CA cert&#34;</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Configurar TLS con verificación obligatoria de cliente (mTLS)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">tlsConfig</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">tls</span>.<span style="color:#a6e22e">Config</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">ClientCAs</span>:  <span style="color:#a6e22e">caCertPool</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">ClientAuth</span>: <span style="color:#a6e22e">tls</span>.<span style="color:#a6e22e">RequireAndVerifyClientCert</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">MinVersion</span>: <span style="color:#a6e22e">tls</span>.<span style="color:#a6e22e">VersionTLS12</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Crea un nuevo servidor HTTPS con configuración TLS personalizada</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">server</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Server</span>{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Addr</span>:      <span style="color:#e6db74">&#34;:&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">port</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">Handler</span>:   <span style="color:#a6e22e">router</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">TLSConfig</span>: <span style="color:#a6e22e">tlsConfig</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Inicia el servidor HTTPS, cargando el certificado y clave privada del servidor</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">server</span>.<span style="color:#a6e22e">ListenAndServeTLS</span>(<span style="color:#e6db74">&#34;resources/agent.crt&#34;</span>, <span style="color:#e6db74">&#34;resources/agent.key&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;Failed to start server: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="mtls-en-kubernetes">mTLS en Kubernetes</h1>
+<p>Cuando trabajas con cientos o miles de microservicios desplegados en Kubernetes, gestionar certificados y configuraciones mTLS manualmente para cada servicio se vuelve complejo y propenso a errores. Aquí es donde entra en juego Istio (o una herramienta
+similar como Traefik o cert-manager), un service mesh que abstrae y automatiza la seguridad, incluyendo la configuración de mTLS entre servicios.</p>
+<p>Istio actúa como una capa intermedia de red que se instala en Kubernetes y que:</p>
+<ol>
+<li>Inyecta automáticamente un proxy Envoy como sidecar en cada pod de los servicios que deseas proteger.</li>
+<li>El proxy sidecar intercepta todo el tráfico de red hacia y desde el pod, gestionando la conexión TLS y la autenticación.</li>
+</ol>
+<p>De esta forma los microservicios no necesitan modificar su código para usar TLS, ya que Istio se encarga de cifrar y autenticar las conexiones automáticamente. Como estarás pensando, esto implica que toda la implementación a nivel de código no tiene
+sentido&hellip; Bueno, eso depende de si la plataforma se instala en un cluster que cuente con Istio o no. Lo que me falta por programar es la capacidad de configurar el certificado o no a partir de archivos de configuración o variables.</p>
+<p>Istio usa recursos personalizados de Kubernetes para configurar la seguridad del tráfico entre servicios. Los principales CRDs para esto son:</p>
+<ul>
+<li><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">PeerAuthentication</span> Define la política de autenticación mutua TLS que se aplica a los pods.</li>
+<li><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">stinationRule</span> Configura cómo los clientes (sidecars) se comunican con los servicios, especificando si usan TLS o no.</li>
+<li><style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">AuthorizationPolicy</span> Controla el acceso basado en identidades y atributos (más granular).</li>
+</ul>
+<p>Estas configuraciones permiten aplicar políticas de seguridad granulares, bien ya sea a todos los servicios, a un namespace específico y o a rutas concretas.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#75715e"># mTLS para todos los servicios</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">security.istio.io/v1beta1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PeerAuthentication</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">istio-system</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">mtls</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">mode</span>: <span style="color:#ae81ff">STRICT</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># mTLS para un namespace</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">security.istio.io/v1beta1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PeerAuthentication</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">production-mtls</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">production</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">mtls</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">mode</span>: <span style="color:#ae81ff">STRICT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>--- <span style="color:#75715e"># mTLS para un servicio concreto</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.istio.io/v1beta1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">DestinationRule</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">reviews-mtls</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">production</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">host</span>: <span style="color:#ae81ff">reviews.production.svc.cluster.local</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">trafficPolicy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tls</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">mode</span>: <span style="color:#ae81ff">ISTIO_MUTUAL</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>--- <span style="color:#75715e">## mTLS para una ruta específica</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">security.istio.io/v1beta1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PeerAuthentication</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">permissive</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">production</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">mtls</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">mode</span>: <span style="color:#ae81ff">PERMISSIVE</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">security.istio.io/v1beta1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">AuthorizationPolicy</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">require-mtls-on-admin</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">production</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">backend</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">to</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">operation</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">paths</span>: [<span style="color:#e6db74">&#34;/admin/*&#34;</span>]
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">when</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># &#39;request.auth.principal&#39; representa la identidad autenticada del cliente extraída del certificado mTLS</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">key</span>: <span style="color:#ae81ff">request.auth.principal</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">values</span>: [<span style="color:#e6db74">&#34;*&#34;</span>]
+</span></span></code></pre></div>
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
