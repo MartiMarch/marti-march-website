@@ -100,7 +100,7 @@ Se puede validar el contenido del certificado usando el siguiente comando:
 openssl x509 -in server.crt -text -noout
 ```
 
-### mTLS en Spring Boot
+#### mTLS en Spring Boot
 
 Para configurar en proyecto de Spring Boot hay que crear contenedor de certificados, ya sea bien usando JKS o PKCS 12. En este caso concreto he utilizado este último. Hay que incluir en el contenedor tanto el server.crt/server.key como el ca.crt.
 
