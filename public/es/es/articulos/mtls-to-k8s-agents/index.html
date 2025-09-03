@@ -4,7 +4,7 @@
     <title>mTLS para agentes de Kubernetes // Marti March</title>
     <link rel="shortcut icon" href="/favicon.ico" />
     <meta charset="utf-8" />
-    <meta name="generator" content="Hugo 0.148.2">
+    <meta name="generator" content="Hugo 0.149.0">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="author" content="Marti March" />
     <meta name="description" content="" />
@@ -15,12 +15,12 @@
     
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="mTLS para agentes de Kubernetes">
-  <meta name="twitter:description" content="Introducción Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. La idea es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS, craso error. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo aún mayor que directamente implementar mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu escenario se ajusta a lo que voy a describir en este artículo, te recomiendo implementar mTLS directamente.">
+  <meta name="twitter:description" content="Introducción Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. El objetivo es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS. Fue una decisión errónea. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo mayor que implementar directamente mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu escenario se ajusta a lo que voy a describir en este artículo, te recomiendo implementar mTLS directamente.">
 
     <meta property="og:url" content="//localhost:1313/es/es/articulos/mtls-to-k8s-agents/">
   <meta property="og:site_name" content="Marti March">
   <meta property="og:title" content="mTLS para agentes de Kubernetes">
-  <meta property="og:description" content="Introducción Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. La idea es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS, craso error. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo aún mayor que directamente implementar mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu escenario se ajusta a lo que voy a describir en este artículo, te recomiendo implementar mTLS directamente.">
+  <meta property="og:description" content="Introducción Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. El objetivo es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS. Fue una decisión errónea. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo mayor que implementar directamente mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu escenario se ajusta a lo que voy a describir en este artículo, te recomiendo implementar mTLS directamente.">
   <meta property="og:locale" content="en_US">
   <meta property="og:type" content="article">
     <meta property="article:section" content="es">
@@ -97,14 +97,14 @@
     </header>
     <div class="post-content">
       <h1 id="introducción">Introducción</h1>
-<p>Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. La idea es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando
-cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS, craso error. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo aún mayor
-que directamente implementar mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu
+<p>Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. El objetivo es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando
+cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS. Fue una decisión errónea. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo mayor
+que implementar directamente mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu
 escenario se ajusta a lo que voy a describir en este artículo, te recomiendo implementar mTLS directamente.</p>
 <ul>
-<li><a href="/es/es/articulos/mtls-to-k8s-agents/#el-problema">El problema</a></li>
-<li><a href="/es/es/articulos/mtls-to-k8s-agents/#mtls">mTLS</a></li>
-<li><a href="/es/es/articulos/mtls-to-k8s-agents/#mtls-en-kubernetes">mTLS en Kubernetes</a></li>
+<li><a href="/es/articulos/mtls-to-k8s-agents/#el-problema">El problema</a></li>
+<li><a href="/es/articulos/mtls-to-k8s-agents/#mtls">mTLS</a></li>
+<li><a href="/es/articulos/mtls-to-k8s-agents/#mtls-en-kubernetes">mTLS en Kubernetes</a></li>
 </ul>
 <h1 id="el-problema">El problema</h1>
 <p>En un extremo está Spring Boot como servidor gestionando la información del agente y, en el otro, los agentes de Go de k8s que pueden conectarse/desconectarse. ¿Cómo puede saber el servidor que el agente es realmente quien dice ser y que no se trata
@@ -115,7 +115,7 @@ de un ataque de MiTM? ¿Cómo puede verificar el agente la autenticidad del serv
 <li>El agente verifica que el servidor también tenga un certificado válido y firmado por la misma CA (u otra CA confiable).</li>
 <li>La comunicación entre ambos se cifra, y ambos extremos pueden estar seguros de con quién están hablando.</li>
 </ul>
-<p>Para configurar mTLS se necesita una CA propia o firmada por una entidad externa y un certificado por cada extremo que se quiera proteger con mTLS. Aunque, antes de pasar a la creación de certificados, hay que tener en cuenta que dentro del certificado
+<p>Para configurar mTLS se necesita una CA propia o firmada por una entidad externa y un certificado por cada extremo que se quiera proteger con mTLS. Pero, antes de pasar a la creación de certificados, conviene tener en cuenta que dentro del certificado
 X.509 hay varios campos que definen el comportamiento esperado de cada nexo.</p>
 <ul>
 <li><style>
@@ -218,7 +218,7 @@ Hay muchos más campos. Para el caso de mTLS los citados son los más importante
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl req -new -key server.key -out server.csr
 </span></span></code></pre></div><ol start="3">
-<li>Se configura un archivo de extensiones server.ext para definir las capacidades del certificado considerando los campos del certificado X.509 que se ha comentado previamente.</li>
+<li>Se configura un archivo  de extensiones server.ext para definir las capacidades del certificado considerando los campos del certificado X.509 que se ha comentado previamente.</li>
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>authorityKeyIdentifier=keyid,issuer             # vincula el certificado con la CA que lo firmó
 </span></span><span style="display:flex;"><span>basicConstraints=CA:FALSE                       # este certificado no es una CA
@@ -239,7 +239,7 @@ Hay muchos más campos. Para el caso de mTLS los citados son los más importante
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -extfile server.ext
 </span></span></code></pre></div><p>Se puede validar el contenido del certificado usando el siguiente comando:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl x509 -in server.crt -text -noout
-</span></span></code></pre></div><h3 id="mtls-en-spring-boot">mTLS en Spring Boot</h3>
+</span></span></code></pre></div><h4 id="mtls-en-spring-boot">mTLS en Spring Boot</h4>
 <p>Para configurar en proyecto de Spring Boot hay que crear contenedor de certificados, ya sea bien usando JKS o PKCS 12. En este caso concreto he utilizado este último. Hay que incluir en el contenedor tanto el server.crt/server.key como el ca.crt.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl pkcs12 -export <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -inkey server.key <span style="color:#ae81ff">\
@@ -415,7 +415,7 @@ entornos o IDs) directamente en la configuración de mTLS. Par ello, en el momen
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -out agent.crt <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -days <span style="color:#ae81ff">825</span> -sha256 <span style="color:#ae81ff">\
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  -extfile agent.ext
-</span></span></code></pre></div><p>Al arrancar el agente llama a cierto endpoint del servidor para que este último registre la información en la base de datos, pasando el dominio, el puerto, el nombre, etc. El agente tiene que generar el cliente http con los certificados previamente
+</span></span></code></pre></div><p>Al arrancar el agente llama a cierto endpoint del servidor para que este último registre la información en la base de datos, pasando (el dominio, el puerto, el nombre, etc). El agente tiene que generar el cliente http con los certificados previamente
 configurados, protegiendo los endpoints de interés con mTLS.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">CreateRouter</span>(<span style="color:#a6e22e">port</span> <span style="color:#66d9ef">string</span>) {
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">router</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">mux</span>.<span style="color:#a6e22e">NewRouter</span>()	

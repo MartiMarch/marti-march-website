@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ens on Marti March</title>
+    <link>//localhost:1313/es/en/</link>
+    <description>Recent content in Ens on Marti March</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 20 Aug 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/es/en/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>mTLS para agentes de Kubernetes</title>
+      <link>//localhost:1313/es/en/posts/mtls-to-k8s-agents/</link>
+      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/en/posts/mtls-to-k8s-agents/</guid>
+      <description>&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;&#xA;&lt;p&gt;I&amp;rsquo;m developing a platform with a service that communicates with several agents. The goal is for the service to be responsible for managing information while the agents are in charge of orchestrating Kubernetes jobs, each of which (the agents) is&#xA;located in a K8S cluster. Since I&amp;rsquo;m developing the MVP, I&amp;rsquo;ve decided to put the TLS implementation on hold temporarily. It was a bad decision. Evading TLS certificates ended up being a bigger waste of time than directly implementing mTLS (Mutual&#xA;Transport Layer Security). The alternative to using mTLS requires creating a robust alternative system; after some experimentation, I realized it was both cumbersome and insecure. Therefore, if your scenario fits what I&amp;rsquo;m going to describe in this&#xA;article, I recommend implementing mTLS directly.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

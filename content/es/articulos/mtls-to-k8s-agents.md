@@ -7,9 +7,9 @@ lang = "es"
 
 # Introducción
 
-Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. La idea es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando
-cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS, craso error. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo aún mayor
-que directamente implementar mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu
+Estoy desarrollando una plataforma con un servicio que se comunica con varios agentes. El objetivo es que el servicio tenga la responsabilidad de gestionar la información mientras que los agentes se encargan de orquestar jobs de Kubernetes, estando
+cada uno de estos (los agentes) en un clúster de K8S. Como estoy desarrollando el PMV, decidí dejar de lado temporalmente la implementación del TLS. Fue una decisión errónea. Evadir los certificados para el TLS terminó siendo una pérdida de tiempo mayor
+que implementar directamente mTLS (mutual Transport Layer Security). La alternativa al uso de mTLS requiere crear un sistema alternativo que sea robusto y, tras experimentar un rato, me di cuenta de que era engorroso y poco seguro. Por eso, si tu
 escenario se ajusta a lo que voy a describir en este artículo, te recomiendo implementar mTLS directamente.
 
 - [El problema](#el-problema)
@@ -27,7 +27,7 @@ Cuando implementas mTLS:
 - El agente verifica que el servidor también tenga un certificado válido y firmado por la misma CA (u otra CA confiable).
 - La comunicación entre ambos se cifra, y ambos extremos pueden estar seguros de con quién están hablando.
 
-Para configurar mTLS se necesita una CA propia o firmada por una entidad externa y un certificado por cada extremo que se quiera proteger con mTLS. Aunque, antes de pasar a la creación de certificados, hay que tener en cuenta que dentro del certificado
+Para configurar mTLS se necesita una CA propia o firmada por una entidad externa y un certificado por cada extremo que se quiera proteger con mTLS. Pero, antes de pasar a la creación de certificados, conviene tener en cuenta que dentro del certificado
 X.509 hay varios campos que definen el comportamiento esperado de cada nexo.
 
 - {{< inlines/black-inline "Key Usage" >}} extensión que define lo que puede hacer la clave pública contenida en el certificado
@@ -296,7 +296,7 @@ openssl x509 -req \
   -extfile agent.ext
 ```
 
-Al arrancar el agente llama a cierto endpoint del servidor para que este último registre la información en la base de datos, pasando el dominio, el puerto, el nombre, etc. El agente tiene que generar el cliente http con los certificados previamente 
+Al arrancar el agente llama a cierto endpoint del servidor para que este último registre la información en la base de datos, pasando (el dominio, el puerto, el nombre, etc). El agente tiene que generar el cliente http con los certificados previamente 
 configurados, protegiendo los endpoints de interés con mTLS.
 
 ```go
@@ -312,7 +312,7 @@ func CreateRouter(port string) {
 		log.Fatalf("Error reading CA cert: %v", err)
 	}
 
-	// Crea un pool (conjunto) de certificados raíz de confianza
+	// Crea un pool de certificados raíz de confianza
 	caCertPool := x509.NewCertPool()
 	if ok := caCertPool.AppendCertsFromPEM(caCert); !ok {
 		log.Fatal("Failed to append CA cert")

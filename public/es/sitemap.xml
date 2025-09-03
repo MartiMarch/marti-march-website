@@ -21,6 +21,19 @@
                 href="//localhost:1313/es/tags/cloud/"
                 />
   </url><url>
+    <loc>//localhost:1313/es/en/</loc>
+    <lastmod>2025-08-20T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/en/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/en/"
+                />
+  </url><url>
     <loc>//localhost:1313/es/es/</loc>
     <lastmod>2025-08-20T00:00:00+00:00</lastmod>
     <xhtml:link
@@ -67,6 +80,9 @@
                 />
   </url><url>
     <loc>//localhost:1313/es/articulos/mtls-to-k8s-agents/</loc>
+    <lastmod>2025-08-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/es/en/posts/mtls-to-k8s-agents/</loc>
     <lastmod>2025-08-20T00:00:00+00:00</lastmod>
   </url><url>
     <loc>//localhost:1313/es/es/articulos/mtls-to-k8s-agents/</loc>
