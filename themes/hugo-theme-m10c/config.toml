@@ -95,5 +95,5 @@ defaultContentLanguageInSubdir = true
   environment = "github"
   #environment = "local"
   plausibleDomain = "martimarch.github.io/marti-march-website"
-  plausibleEndpoint = "https://valentiaarrowpre.com/plausible"
+  plausibleEndpoint = "https://plausible.valentiaarrowpre.com/js/script.js"
 
