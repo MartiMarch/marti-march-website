@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="es">
   <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <script defer data-domain="martimarch.github.io/marti-march-website" src="https://valentiaarrowpre.com/plausible"></script>
     <title>mTLS para agentes de Kubernetes // Marti March</title>
     <link rel="shortcut icon" href="/favicon.ico" />
     <meta charset="utf-8" />
-    <meta name="generator" content="Hugo 0.149.0">
+    <meta name="generator" content="Hugo 0.150.0">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="author" content="Marti March" />
     <meta name="description" content="" />
@@ -218,7 +219,7 @@ Hay muchos más campos. Para el caso de mTLS los citados son los más importante
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl req -new -key server.key -out server.csr
 </span></span></code></pre></div><ol start="3">
-<li>Se configura un archivo  de extensiones server.ext para definir las capacidades del certificado considerando los campos del certificado X.509 que se ha comentado previamente.</li>
+<li>Se configura un archivo de extensiones server.ext para definir las capacidades del certificado considerando los campos del certificado X.509 que se ha comentado previamente.</li>
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>authorityKeyIdentifier=keyid,issuer             # vincula el certificado con la CA que lo firmó
 </span></span><span style="display:flex;"><span>basicConstraints=CA:FALSE                       # este certificado no es una CA
@@ -429,7 +430,7 @@ configurados, protegiendo los endpoints de interés con mTLS.</p>
 </span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatalf</span>(<span style="color:#e6db74">&#34;Error reading CA cert: %v&#34;</span>, <span style="color:#a6e22e">err</span>)
 </span></span><span style="display:flex;"><span>	}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Crea un pool (conjunto) de certificados raíz de confianza</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Crea un pool de certificados raíz de confianza</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">caCertPool</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">x509</span>.<span style="color:#a6e22e">NewCertPool</span>()
 </span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">ok</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">caCertPool</span>.<span style="color:#a6e22e">AppendCertsFromPEM</span>(<span style="color:#a6e22e">caCert</span>); !<span style="color:#a6e22e">ok</span> {
 </span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#e6db74">&#34;Failed to append CA cert&#34;</span>)

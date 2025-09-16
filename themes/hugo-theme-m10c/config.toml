@@ -94,3 +94,6 @@ defaultContentLanguageInSubdir = true
   avatar = "user-photo.jpeg"
   environment = "github"
   #environment = "local"
+  plausibleDomain = "martimarch.github.io/marti-march-website"
+  plausibleEndpoint = "https://valentiaarrowpre.com/plausible"
+
