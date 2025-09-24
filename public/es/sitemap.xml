@@ -3,7 +3,104 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>//localhost:1313/es/articulos/</loc>
-    <lastmod>2025-08-20T00:00:00+00:00</lastmod>
+    <lastmod>2025-09-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/es/tags/cloudflare/</loc>
+    <lastmod>2025-09-12T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/tags/cloudflare/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/tags/cloudflare/"
+                />
+  </url><url>
+    <loc>//localhost:1313/es/es/</loc>
+    <lastmod>2025-09-12T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/es/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/es/"
+                />
+  </url><url>
+    <loc>//localhost:1313/es/articulos/exponiendo-servicios-a-internet-con-cloudflare-y-istio/</loc>
+    <lastmod>2025-09-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/es/es/articulos/exponiendo-servicios-a-internet-con-cloudflare-y-istio/</loc>
+    <lastmod>2025-09-12T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>//localhost:1313/es/tags/istio/</loc>
+    <lastmod>2025-09-12T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/tags/istio/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/tags/istio/"
+                />
+  </url><url>
+    <loc>//localhost:1313/es/tags/k8s/</loc>
+    <lastmod>2025-09-12T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/tags/k8s/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/tags/k8s/"
+                />
+  </url><url>
+    <loc>//localhost:1313/es/</loc>
+    <lastmod>2025-09-12T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/"
+                />
+  </url><url>
+    <loc>//localhost:1313/es/tags/network/</loc>
+    <lastmod>2025-09-12T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/tags/network/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/tags/network/"
+                />
+  </url><url>
+    <loc>//localhost:1313/es/tags/</loc>
+    <lastmod>2025-09-12T00:00:00+00:00</lastmod>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-us"
+                href="//localhost:1313/tags/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en-US"
+                href="//localhost:1313/es/tags/"
+                />
   </url><url>
     <loc>//localhost:1313/es/tags/agent/</loc>
     <lastmod>2025-08-20T00:00:00+00:00</lastmod>
@@ -31,19 +128,6 @@
                 href="//localhost:1313/es/tags/cloud/"
                 />
   </url><url>
-    <loc>//localhost:1313/es/es/</loc>
-    <lastmod>2025-08-20T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="//localhost:1313/es/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-US"
-                href="//localhost:1313/es/es/"
-                />
-  </url><url>
     <loc>//localhost:1313/es/tags/go/</loc>
     <lastmod>2025-08-20T00:00:00+00:00</lastmod>
     <xhtml:link
@@ -57,19 +141,6 @@
                 href="//localhost:1313/es/tags/go/"
                 />
   </url><url>
-    <loc>//localhost:1313/es/tags/k8s/</loc>
-    <lastmod>2025-08-20T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="//localhost:1313/tags/k8s/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-US"
-                href="//localhost:1313/es/tags/k8s/"
-                />
-  </url><url>
     <loc>//localhost:1313/es/tags/kubernetes/</loc>
     <lastmod>2025-08-20T00:00:00+00:00</lastmod>
     <xhtml:link
@@ -81,19 +152,6 @@
                 rel="alternate"
                 hreflang="en-US"
                 href="//localhost:1313/es/tags/kubernetes/"
-                />
-  </url><url>
-    <loc>//localhost:1313/es/</loc>
-    <lastmod>2025-08-20T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="//localhost:1313/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-US"
-                href="//localhost:1313/es/"
                 />
   </url><url>
     <loc>//localhost:1313/es/articulos/mtls-to-k8s-agents/</loc>
@@ -126,19 +184,6 @@
                 rel="alternate"
                 hreflang="en-US"
                 href="//localhost:1313/es/tags/spring-boot/"
-                />
-  </url><url>
-    <loc>//localhost:1313/es/tags/</loc>
-    <lastmod>2025-08-20T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-us"
-                href="//localhost:1313/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en-US"
-                href="//localhost:1313/es/tags/"
                 />
   </url><url>
     <loc>//localhost:1313/es/articulos/learninng-aws-with-localstack/</loc>

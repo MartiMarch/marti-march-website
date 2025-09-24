@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Istio on Martí March</title>
+    <link>//localhost:1313/tags/istio/</link>
+    <description>Recent content in Istio on Martí March</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 12 Sep 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/tags/istio/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exposing services to the internet using Cloudflare and Istio</title>
+      <link>//localhost:1313/en/posts/expose-service-to-internet-with-cloudflare-and-istio/</link>
+      <pubDate>Fri, 12 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/en/posts/expose-service-to-internet-with-cloudflare-and-istio/</guid>
+      <description>&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;&#xA;&lt;p&gt;I have a curiosity to know who visit my webpages, some of them hosted on GitHub. So, I installed Plausible to get SEO metrics, which implies exposing the services of my self-hosted environment. But, ¿how can a service be exposed to the internet without&#xA;dealing with low-performance dynamic DNS or buying a public IP? This will be explained in this post: how to combine Cloudflare tunnel and Istio to expose the services.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="es">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+    <script defer data-domain="martimarch.github.io/marti-march-website" src="https://pre.plausible.com/js/script.js"></script>
+=======
+    <script async defer data-domain="martimarch.github.io/marti-march-website" src="https://plausible.valentiaarrowpre.com/js/script.js"></script>
+>>>>>>> master
+    <title>Exponiendo servicios a internet con Cloudflare y Istio // Marti March</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.150.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Marti March" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.d024432de022f80a70ac780c7b5c1965b59484c9412974c923ed27741792fb9a.css" />
+    
+
+    
+    
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Exponiendo servicios a internet con Cloudflare y Istio">
+  <meta name="twitter:description" content="Introducción Siempre he tenido curiosidad por saber quién visita mis páginas web, algunas de ellas hospedadas en GitHub. Es por eso que instalé Plausible para conocer métricas SEO, cosa que implicó tener que exponer ciertos servicios de mi entorno self-hosted. Pero, ¿cómo se puede exponer un servicio a internet sin tener que lidiar con DDNS lentos o la contratación de una IP pública? Eso es lo que detallaré en este artículo: con la combinación de los túneles de Cloudfalred y Istio para exponer los servicios.">
+
+    <meta property="og:url" content="//localhost:1313/es/articulos/exponiendo-servicios-a-internet-con-cloudflare-y-istio/">
+  <meta property="og:site_name" content="Marti March">
+  <meta property="og:title" content="Exponiendo servicios a internet con Cloudflare y Istio">
+  <meta property="og:description" content="Introducción Siempre he tenido curiosidad por saber quién visita mis páginas web, algunas de ellas hospedadas en GitHub. Es por eso que instalé Plausible para conocer métricas SEO, cosa que implicó tener que exponer ciertos servicios de mi entorno self-hosted. Pero, ¿cómo se puede exponer un servicio a internet sin tener que lidiar con DDNS lentos o la contratación de una IP pública? Eso es lo que detallaré en este artículo: con la combinación de los túneles de Cloudfalred y Istio para exponer los servicios.">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="articulos">
+    <meta property="article:published_time" content="2025-09-12T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-09-12T00:00:00+00:00">
+    <meta property="article:tag" content="K8s">
+    <meta property="article:tag" content="Istio">
+    <meta property="article:tag" content="Cloudflare">
+    <meta property="article:tag" content="Network">
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="/"><img class="app-header-avatar" src="/user-photo.jpeg" alt="Marti March" /></a>
+      <span class="app-header-title">Marti March</span>
+      <hr class="menu-hr">
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/es/sobre-mi">Sobre mí</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/es/articulos/">Últimos artículos</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/es/intereses">Intereses</a>
+      </nav>
+      <hr class="menu-hr">
+      <p> </p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/MartiMarch" target="_blank" rel="noreferrer noopener me">
+            <svg class="icon icon-brand-github" viewBox="0 0 24 24" fill="currentColor"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/mart%C3%AD-march" target="_blank" rel="noreferrer noopener me">
+            <svg class="icon icon-brand-linkedin" viewBox="0 0 24 24" fill="currentColor"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+        
+      </div>
+      <hr class="menu-hr">
+      <div class="lang-switcher">
+        <a href="/marti-march-website/es/articulos">ES</a>
+        <span class="span-languages">|</span>
+        <a href="/marti-march-website/en/posts">EN</a>
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Exponiendo servicios a internet con Cloudflare y Istio</h1>
+      <div class="post-meta">
+        <div>
+          <svg class="icon icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>calendar</title><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Sep 12, 2025
+        </div>
+        <div>
+          <svg class="icon icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>clock</title><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          8 min read
+        </div>
+        <div>
+          <svg class="icon icon-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>tag</title><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+              <a class="tag" href="/es/tags/k8s/">K8s</a>
+              <a class="tag" href="/es/tags/istio/">Istio</a>
+              <a class="tag" href="/es/tags/cloudflare/">Cloudflare</a>
+              <a class="tag" href="/es/tags/network/">Network</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h1 id="introducción">Introducción</h1>
+<p>Siempre he tenido curiosidad por saber quién visita mis páginas web, algunas de ellas hospedadas en GitHub. Es por eso que instalé Plausible para conocer métricas SEO, cosa que implicó tener que exponer ciertos servicios de mi entorno
+self-hosted. Pero, ¿cómo se puede exponer un servicio a internet sin tener que lidiar con DDNS lentos o la contratación de una IP pública? Eso es lo que detallaré en este artículo: con la combinación de los túneles de Cloudfalred y Istio
+para exponer los servicios.</p>
+<h1 id="dominios-y-dns">Dominios y DNS</h1>
+<p>Lo único que se necesita pagar son los dominios. Se pueden contratar en diversos proveedores, en mi caso he optado por emplear el servicio que tiene el propio Cloudfared. En general, los dominios terminados en *.com suelen rondar ~10
+euros al año.</p>
+<p>Una vez que tengas contratado el dominio, es necesario entender que es el CNAME, ya que afectará al redireccionar el tráfico. El CNAME es un tipo de registro DNS que indica que un dominio es un alias de otro dominio; cuando alguien escribe tu dominio
+en el navegador, el DNS lo redirige al dominio “real” que tiene los recursos. ¿Por qué es importante esto? Como Istio va a emplearse como Reverse Proxy y necesitamos exponer tantos servicios como sea posible, Cloudflare necesita saber a quién
+ha de redireccionar la petición. Pero, si no se va a contratar una IP estática y pública, ¿cómo puede conocer el DNS a quién tiene que redirigir la petición? El que resuelve dicho problema es el túnel de Cloudflare. El túnel es un
+deplyoment que, dentro del contenedor de este, se abre un socket con cierta configuración reapuntando a Istio. En otras palabras, Cloudflare funciona como un reverse proxy externo, que a su vez reenvía las peticiones a Istio, otro reverse proxy
+que distribuye el tráfico a los servicios dentro del clúster.</p>
+<style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    
+    
+        
+    
+    <img src="/marti-march-website/posts/expose-service-to-internet-with-cloudflare/tunel.png">
+</div>
+<p>Para que el dominio pueda ser redireccionado por el túnel, el CNAME tiene que usar un wildcard; de esta forma Istio puede redirigir a infinitos servicios usando un DNS wildcard como <style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">*.fake-domain.com</span>. En mi caso se trata
+de <style>
+    .black-inline {
+        background-color: #272822;
+        padding: 0.15em 0.15em;
+    }
+</style>
+<span class="black-inline">pluasible.fake-domain.com</span>. Se puede configurar en el DNS del dominio desde la UI de Cloudflare.</p>
+<style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    
+    
+        
+    
+    <img src="/marti-march-website/posts/expose-service-to-internet-with-cloudflare/cname.png">
+</div>
+<h1 id="istio">Istio</h1>
+<p>Instalar Istio en Kubernetes es sencillo utilizando el chart de Helm, no he necesitado modificar nada.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>helm repo add istio https://istio-release.storage.googleapis.com/charts
+</span></span><span style="display:flex;"><span>helm repo update
+</span></span><span style="display:flex;"><span>helm install istio-base istio/base -n istio-system --set defaultRevision<span style="color:#f92672">=</span>default --create-namespace
+</span></span><span style="display:flex;"><span>helm install istiod istio/istiod -n istio-system --wait
+</span></span><span style="display:flex;"><span>helm install istio-ingress istio/gateway -n istio-system
+</span></span></code></pre></div><p>Necesitaremos dos piezas para poder redireccionar peticiones desde el deployment del túnel de Cloudflare a los servicios internos del clúster: un Gateway y un VirtualService. Un Gateway actúa como el punto de entrada del tráfico al
+clúster, configurando los puertos, protocolos y certificados TLS que acepta el load balancer. Un VirtualService es el semáforo que define las reglas de enrutamiento para dirigir o bloquear las solicitudes entrantes (del Gateway)
+hacia el servicio interno.</p>
+<p>El Gateway y el VirtualService se han configurado para exponer de forma segura los endpoints de la API de Plausible, permitiendo únicamente el envío de métricas desde el script instalado en la página web my-fake-webpage.com. El VirtualService
+solo permite el acceso a las dos rutas necesarias de Plausible para recibir datos (/js y /api/event), redirigiendo las peticiones entrantes al servicio interno del clúster. También se ha implementado una política para que solo la URL de la web
+pueda enviar las peticiones, bloqueando cualquier otro acceso malintencionado al panel de administración de Plausible y redirigiendo el tráfico no deseado a un dominio falso.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.istio.io/v1alpha3</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Gateway</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">fake-domain-gateway</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">istio-system</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">istio</span>: <span style="color:#ae81ff">ingress</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">servers</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">number</span>: <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">http</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">HTTP</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">hosts</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Con el wildcard se puede redireccionar el wildcard del CNAME del dominio</span>
+</span></span><span style="display:flex;"><span>        - <span style="color:#e6db74">&#34;*.fake-domain.com&#34;</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.istio.io/v1alpha3</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">VirtualService</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># Yo voy a redirigir todo mi tráfico a Plausible</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">plausible</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">istio-system</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">hosts</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#e6db74">&#34;plausible.fake-domain.com&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">gateways</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">fake-domain-gateway</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">match</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">uri</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># Plausible envía métricas al path /js de plausible, solo se expone ese path</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># en caso contrarío cualquiera podría intentar hacer log-in en el servicio</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">prefix</span>: <span style="color:#e6db74">&#34;/js&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">route</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">destination</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># DNS del servicio de Kubernetes, apunta aun ClusterIP</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">host</span>: <span style="color:#ae81ff">plausible-http.infra.svc.cluster.local</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8000</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">corsPolicy</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">allowOrigins</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># Solo acepto recibir peticiones desde el dominio de mi página web con el </span>
+</span></span><span style="display:flex;"><span>          <span style="color:#75715e"># script de Plausible configurado</span>
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">exact</span>: <span style="color:#ae81ff">https://my-fake-webpage.com</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">allowMethods</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#ae81ff">GET</span>
+</span></span><span style="display:flex;"><span>          - <span style="color:#ae81ff">POST</span>
+</span></span><span style="display:flex;"><span>          - <span style="color:#ae81ff">OPTIONS</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">allowHeaders</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#ae81ff">Content-Type</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">maxAge</span>: <span style="color:#ae81ff">1h</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">allowCredentials</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">match</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">uri</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># Este es otro endpoint que hay que exponer para el envío de métricas</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">prefix</span>: <span style="color:#e6db74">&#34;/api/event&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">route</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">destination</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">host</span>: <span style="color:#ae81ff">plausible-http.infra.svc.cluster.local</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8000</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">corsPolicy</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">allowOrigins</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#f92672">exact</span>: <span style="color:#ae81ff">https://my-fake-webpage.com</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">allowMethods</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#ae81ff">GET</span>
+</span></span><span style="display:flex;"><span>          - <span style="color:#ae81ff">POST</span>
+</span></span><span style="display:flex;"><span>          - <span style="color:#ae81ff">OPTIONS</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">allowHeaders</span>:
+</span></span><span style="display:flex;"><span>          - <span style="color:#ae81ff">Content-Type</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">maxAge</span>: <span style="color:#ae81ff">1h</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">allowCredentials</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Cae en un fallo en caso de solicitar otro path</span>
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">route</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">destination</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">host</span>: <span style="color:#ae81ff">blackhole.svc.cluster.local</span>
+</span></span></code></pre></div><p>Puedes validar si se está redireccionando la petición correctamente con el siguiente curl:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -v -H <span style="color:#e6db74">&#34;Host: fake-domain.com&#34;</span> http://192.168.2.85/<span style="color:#f92672">{</span>service path<span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="cloudflare-tunnel">Cloudflare tunnel</h1>
+<p>Con el CLI de Cloudflare se puede levantar un túnel usando un par de comandos, exponiendo cualquier servicio local al exterior con un dominio generado aleatoriamente.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Instalación del CLI</span>
+</span></span><span style="display:flex;"><span>brew install cloudflared
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cloudflared tunnel --url http://localhsot:8000
+</span></span></code></pre></div><p>Para redireccionar al domino que se ha comprado, hay que realizar un inicio de sesión en Cloudflare para obtener el json con las credenciales. También hay que configurar la redirección del DNS.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># El comando abrirá una ventana donde se ha de seleccionar el dominio comprado</span>
+</span></span><span style="display:flex;"><span>cloudflared tunnel login
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Permite que el DNS redireccione a Istio</span>
+</span></span><span style="display:flex;"><span>cloudflared tunnel route dns <span style="color:#f92672">{</span>ID del tunel<span style="color:#f92672">}</span> fake-domain.com
+</span></span></code></pre></div><p>Hay que crear un archivo de configuración para que el túnel conozca el dominio/IP al cual redireccionar, en este caso es la IP del Gateway de Istio.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">tunnel</span>: {<span style="color:#ae81ff">ID del tunel}</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Credenciales del túnel</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">credentials-file</span>: <span style="color:#ae81ff">/home/{username}/.cloudflared/{ID del tunel}.json</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">ingress</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">hostname</span>: <span style="color:#ae81ff">fake-domain.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Dominio del LoadBalancer del gateway de Istio</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">service</span>: <span style="color:#ae81ff">http://192.168.2.85</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">service</span>: <span style="color:#ae81ff">http_status:404</span>
+</span></span></code></pre></div><p>Este archivo de configuración se puede usar localmente para probar si el túnel funciona como debería.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cloudflared tunnel --config cloudflared.yaml run <span style="color:#f92672">{</span>ID del tunel<span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Para hospedar el túnel en Kubernetes hay que crear un deployment para el CLI, un configmap para la configuración y un secreto con las credenciales del túnel.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudflare-config</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">istio-system</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">config.yaml</span>: |-<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    tunnel: {ID del túnel}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    credentials-file: /etc/cloudflared/{ID del túnel}.json
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ingress:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - hostname: fake-domain.com
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        service: http://192.168.2.85
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - service: http_status:404</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># El JSON con las credenciales se guarda por defecto en /home/{username}/.cloudflared/{ID del tunel}.json</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># cat /home/{username}/.cloudflared/{ID del tunel}.json | base64 -w0</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Secret</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudflare-fake-domain-json</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">istio-system</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">type</span>: <span style="color:#ae81ff">Opaque</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">data</span>:
+</span></span><span style="display:flex;"><span>  {<span style="color:#f92672">ID del tunel}.json</span>: <span style="color:#75715e">****</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudflare-fake-domain-pre</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">istio-system</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">app</span>: <span style="color:#ae81ff">cloudflare-fake-domain</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">app</span>: <span style="color:#ae81ff">cloudflare-fake-domain</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudflared</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">image</span>: <span style="color:#ae81ff">cloudflare/cloudflared:latest</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">args</span>: [<span style="color:#e6db74">&#34;tunnel&#34;</span>, <span style="color:#e6db74">&#34;--no-autoupdate&#34;</span>, <span style="color:#e6db74">&#34;run&#34;</span>, <span style="color:#e6db74">&#34;{ID del túnel}&#34;</span>]
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>            - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">configuration</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/etc/cloudflared</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">readOnly</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">configuration</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">projected</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">sources</span>:
+</span></span><span style="display:flex;"><span>              - <span style="color:#f92672">configMap</span>:
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudflare-fake-domain-config</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">items</span>:
+</span></span><span style="display:flex;"><span>                    - <span style="color:#f92672">key</span>: <span style="color:#ae81ff">config.yaml</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#f92672">path</span>: <span style="color:#ae81ff">config.yaml</span>
+</span></span><span style="display:flex;"><span>              - <span style="color:#f92672">secret</span>:
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloudflare-fake-domain-json</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">items</span>:
+</span></span><span style="display:flex;"><span>                    - <span style="color:#f92672">key</span>: {<span style="color:#ae81ff">ID del túnel}.json</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#f92672">path</span>: {<span style="color:#ae81ff">ID del túnel}.json</span>
+</span></span></code></pre></div><p>Si todo está bien redireccionado, el dominio ya expondrá los servicios. Los servicios tendrían que ser accesibles a través de internet, en caso contrario significa que hay algún fallo.</p>
+<h1 id="conclusiones">Conclusiones</h1>
+<p>Ahora, cuando alguien acceda a la página web, se enviará la métrica desde la página web a plausible a través del dominio plausible.fake-domain.com, pasando por el túnel de cloudflare, que a su vez redirecciona la petición a Istio y, este
+a su vez redirecciona la petición al servicio aplicando las políticas del VirtualService.</p>
+<style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    
+    
+        
+    
+    <img src="/marti-march-website/posts/expose-service-to-internet-with-cloudflare/esquema-complejo-envio.png">
+</div>
+<p>Para el tráfico de salida el flujo es muy similar, pero con un matiz: las políticas del VirtualService solo sirven para filtrar el tráfico entrante. Istio permite controlar el tráfico saliente de un servicio de diferentes formas.
+En este escenario concreto se tendría que configurar el sidecar del namespace de Plausible y utilizar un ServiceEntry para definir una lista blanca de servicios externos permitidos y, opcionalmente, un Egress Gateway para centralizar y
+auditar toda la comunicación saliente. El sidecar sería el encargado de hacer cumplir estas políticas, bloqueando cualquier conexión no autorizada.</p>
+<style>
+    .img-center {
+        text-align: center;
+        margin: 1em 0;
+    }
+    .img-center img {
+        display: inline-block;
+    }
+</style>
+
+<div class="img-center">
+    
+    
+        
+    
+    <img src="/marti-march-website/posts/expose-service-to-internet-with-cloudflare/esquema-complejo-respuesta.png">
+</div>
+<p>Tras ver en detalle como se puede implementar de forma económica la exposición de los servicios, queda preguntarse si es una solución útil para entornos productivos. Para mi entorno preproductivo es una solución solvente.
+No obstante, ¿cumple las expectativas?</p>
+<h4 id="seguridad">Seguridad</h4>
+<p>Istio es bastante flexible al aplicar políticas, pero para tener la mejor implementación robusta es necesario auditar el tráfico conectando Istio a Prometheus y ELK/Loki, además de habilitar un sistema de backup. También hay que configurar
+Cloudflare y Istio para evitar un ataque DDOS, aunque el túnel actúa como un limitador implícito, ya que solo se inicia un número finito de conexiones persistentes.</p>
+<h4 id="rendimiento">Rendimiento</h4>
+<p>Se introduce latencia adicional por los saltos de red (Cloudflare -&gt; Túnel -&gt; Istio). Además, el ancho de banda está limitado por la capacidad del túnel y del nodo donde se ejecuta Cloudflare. Si bien es suficiente para la mayoría de
+servicios, puede no ser ideal para cargas de trabajo que requieran latencia mínima o una escalabilidad masiva. Sería necesario verificar que cumple las expectativas lanzando una prueba de rendimiento.</p>
+<h4 id="disponibilidad">Disponibilidad</h4>
+<p>Esta arquitectura introduce dependencias externas (Cloudflare) y aumenta la complejidad interna. Un problema en la configuración de cualquiera de estas capas puede derivar en una caída del servicio. Mantener este stack actualizado y
+monitorizado requiere conocimientos específicos y puede llegar a consumir demasiados recursos. Para un entorno productivo, es vital tener un plan de respaldo y un buen entendimiento de toda la pila. Se podría crear un agente que, tras
+saltar una alarma en alguno de los puntos (por ejemplo, si Cloudflare deja de estar disponible) despliegue la infraestructura necesaria para exponer los servicios con otro servicio cloud.</p>
+<h4 id="escalabilidad">Escalabilidad</h4>
+<p>Si se manejan cientos de servicios, con varios equipos de desarrollo, es necesario hacer un trabajo extra par crear los automatismos necesarios que permitan configurar el despliegue mediante IaC. Al gestionar masivamente la solución,
+también es necesario aplicar unas políticas comunes a nivel organizativo a nivel de seguridad, observabilidad y automatización, evitando liar al desarrollador de forma innecesaria.</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

@@ -6,14 +6,14 @@
     <description>Recent content in Ens on Marti March</description>
     <generator>Hugo</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 20 Aug 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 12 Sep 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/es/en/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>mTLS para agentes de Kubernetes</title>
-      <link>//localhost:1313/es/en/posts/mtls-to-k8s-agents/</link>
-      <pubDate>Wed, 20 Aug 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/es/en/posts/mtls-to-k8s-agents/</guid>
-      <description>&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;&#xA;&lt;p&gt;I&amp;rsquo;m developing a platform with a service that communicates with several agents. The goal is for the service to be responsible for managing information while the agents are in charge of orchestrating Kubernetes jobs, each of which (the agents) is&#xA;located in a K8S cluster. Since I&amp;rsquo;m developing the MVP, I&amp;rsquo;ve decided to put the TLS implementation on hold temporarily. It was a bad decision. Evading TLS certificates ended up being a bigger waste of time than directly implementing mTLS (Mutual&#xA;Transport Layer Security). The alternative to using mTLS requires creating a robust alternative system; after some experimentation, I realized it was both cumbersome and insecure. Therefore, if your scenario fits what I&amp;rsquo;m going to describe in this&#xA;article, I recommend implementing mTLS directly.&lt;/p&gt;</description>
+      <title>¿Quién visita tu web?</title>
+      <link>//localhost:1313/es/en/posts/how-to-know-who-visits-your-web/</link>
+      <pubDate>Fri, 12 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/en/posts/how-to-know-who-visits-your-web/</guid>
+      <description>&lt;p&gt;Necesidad -&amp;gt; Saber quién visita mi página web&#xA;Legalidad -&amp;gt; avisar sobre el tratamiento de datos&#xA;Plausible -&amp;gt; Explicar que es la herramienta y que me permite hacer -&amp;gt; instalación en kubernetes&lt;/p&gt;&#xA;&lt;p&gt;cloudflared login&lt;/p&gt;&#xA;&lt;p&gt;cloudflared tunnel &amp;ndash;url https:://pre.plausible.com&lt;/p&gt;&#xA;&lt;p&gt;Se compran los dominios&lt;/p&gt;&#xA;&lt;p&gt;Instalo Istio en el cluster&lt;/p&gt;&#xA;&lt;p&gt;Ato el dominio a Istio y aplico reglas de redireccionamiento más certificado TLS&lt;/p&gt;&#xA;&lt;p&gt;Creo un deployment para CLoudflared y le engancho el tunnel a Istio&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

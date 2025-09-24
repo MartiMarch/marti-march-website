@@ -6,8 +6,15 @@
     <description>Recent content on Marti March</description>
     <generator>Hugo</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 20 Aug 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 12 Sep 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/es/articulos/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exponiendo servicios a internet con Cloudflare y Istio</title>
+      <link>//localhost:1313/es/articulos/exponiendo-servicios-a-internet-con-cloudflare-y-istio/</link>
+      <pubDate>Fri, 12 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/articulos/exponiendo-servicios-a-internet-con-cloudflare-y-istio/</guid>
+      <description>&lt;h1 id=&#34;introducción&#34;&gt;Introducción&lt;/h1&gt;&#xA;&lt;p&gt;Siempre he tenido curiosidad por saber quién visita mis páginas web, algunas de ellas hospedadas en GitHub. Es por eso que instalé Plausible para conocer métricas SEO, cosa que implicó tener que exponer ciertos servicios de mi entorno&#xA;self-hosted. Pero, ¿cómo se puede exponer un servicio a internet sin tener que lidiar con DDNS lentos o la contratación de una IP pública? Eso es lo que detallaré en este artículo: con la combinación de los túneles de Cloudfalred y Istio&#xA;para exponer los servicios.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>mTLS para agentes de Kubernetes</title>
       <link>//localhost:1313/es/articulos/mtls-to-k8s-agents/</link>

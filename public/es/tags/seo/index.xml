@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Seo on Marti March</title>
+    <link>//localhost:1313/es/tags/seo/</link>
+    <description>Recent content in Seo on Marti March</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Fri, 12 Sep 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/es/tags/seo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>¿Quién visita tu web?</title>
+      <link>//localhost:1313/es/en/posts/how-to-know-who-visits-your-web/</link>
+      <pubDate>Fri, 12 Sep 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/es/en/posts/how-to-know-who-visits-your-web/</guid>
+      <description>&lt;p&gt;Necesidad -&amp;gt; Saber quién visita mi página web&#xA;Legalidad -&amp;gt; avisar sobre el tratamiento de datos&#xA;Plausible -&amp;gt; Explicar que es la herramienta y que me permite hacer -&amp;gt; instalación en kubernetes&lt;/p&gt;&#xA;&lt;p&gt;cloudflared login&lt;/p&gt;&#xA;&lt;p&gt;cloudflared tunnel &amp;ndash;url https:://pre.plausible.com&lt;/p&gt;&#xA;&lt;p&gt;Se compran los dominios&lt;/p&gt;&#xA;&lt;p&gt;Instalo Istio en el cluster&lt;/p&gt;&#xA;&lt;p&gt;Ato el dominio a Istio y aplico reglas de redireccionamiento más certificado TLS&lt;/p&gt;&#xA;&lt;p&gt;Creo un deployment para CLoudflared y le engancho el tunnel a Istio&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
